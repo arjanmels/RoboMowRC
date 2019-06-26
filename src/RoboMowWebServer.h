@@ -9,7 +9,7 @@
 
 class AutoConnectSpiffs : public AutoConnect
 {
-    static const size_t JSON_BUFFER_SIZE = 10000;
+    static const size_t JSON_BUFFER_SIZE = 1000;
 
     using AutoConnect::AutoConnect;
 
@@ -101,7 +101,7 @@ public:
         if (auxPage == nullptr)
             return nullptr;
         loadParamsFromSpiffs(*auxPage, "/save/" + pageName + ".json");
-        auxPage->on(saveParams);
+        //auxPage->on(saveParams);
         return auxPage;
     }
     AutoConnectAux *loadConfigAuxFromSpiffs(String pageName)
@@ -116,9 +116,7 @@ public:
     }
     AutoConnectAux *loadConfigAux(String pageName, const char *auxString)
     {
-        Serial.println("test-1");
         load(auxString);
-        Serial.println("test-2");
         return loadConfig(pageName);
     }
 };
@@ -126,9 +124,32 @@ public:
 class RoboMowRCPortal : public AutoConnectSpiffs
 {
     using AutoConnectSpiffs::AutoConnectSpiffs;
-    AutoConnectAux *AuxSettings;
 
 public:
+    AutoConnectAux *settings;
+
+    String getSetting(String setting)
+    {
+        AutoConnectElement *element = settings->getElement(setting);
+        if (element == nullptr)
+            return String();
+        if (element->typeOf() == AC_Input)
+        {
+            if (!element->as<AutoConnectInput>().isValid())
+                return String();
+            else
+                return element->value;
+        }
+        else if (element->typeOf() == AC_Checkbox)
+        {
+            return element->as<AutoConnectCheckbox>().checked ? "1" : "0";
+        }
+        else
+        {
+            return element->value;
+        }
+    }
+
     bool begin()
     {
         // Start periodic timer used for sampling ADC etc.
@@ -137,16 +158,20 @@ public:
         config.autoReconnect = true;
         config.title = "RoboMow RC";
         config.apid = "RoboMowRC";
-        config.bootUri = AC_ONBOOTURI_HOME;
-        config.homeUri = "/settings";
+        config.psk = "12345678";
+        config.bootUri = AC_ONBOOTURI_ROOT;
+        config.portalTimeout = 10;
+        config.retainPortal = false;
+        config.autoReset = false;
+        config.cssExtra = "label+input,label+select { position:sticky; left: 250px; width:300px!important; box-sizing: border-box;}";
         AutoConnect::config(config);
-        Serial.println("test2");
-        AuxSettings = loadConfigAux("settings", FPSTR(AuxSettings));
-        Serial.println("test3");
-        if (AuxSettings == nullptr)
+        settings = loadConfigAux("settings", FPSTR(AuxSettings));
+        if (settings == nullptr)
+        {
             Serial.println("[AC+] Could not load settings");
-
-        Serial.println("test3");
+            while (1)
+                ;
+        }
         return AutoConnectSpiffs::begin(nullptr, nullptr, 5000);
     }
 };

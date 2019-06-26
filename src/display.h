@@ -15,6 +15,7 @@
 
 #include <Arduino.h>
 #include <SSD1306Wire.h>
+#include <time.h>
 #include "config.h"
 
 #define OLED_RST 16
@@ -44,6 +45,17 @@ void displayStart()
     display.setTextAlignment(TEXT_ALIGN_RIGHT);
     display.setFont(ArialMT_Plain_10);
     display.drawString(128, 54, WiFi.localIP().toString());
+
+    struct tm timeinfo;
+    if (getLocalTime(&timeinfo, 10))
+    {
+        char buff[20];
+        strftime(buff, 20, "%H:%M:%S", &timeinfo);
+
+        display.setTextAlignment(TEXT_ALIGN_LEFT);
+        display.setFont(ArialMT_Plain_10);
+        display.drawString(0, 54, buff);
+    }
 
     display.display();
 }

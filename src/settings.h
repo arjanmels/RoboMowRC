@@ -10,27 +10,11 @@ const char AuxSettings[] PROGMEM = R"---(
     "menu": true,
     "element": [
         {
-            "name": "ntpserver",
-            "type": "ACInput",
-            "value": "pool.ntp.org",
-            "placeholder": "NTP / Time server",
-            "label": "NTP server",
-            "pattern": "(^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$)|(^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]))*$)"
-        },
-        {
-            "name": "ipgeolocation_apikey",
-            "type": "ACInput",
-            "value": "",
-            "placeholder": "API key for ipgeolocation.io",
-            "label": "ipgeolocation API Key",
-            "options": "(^[A-Fa-f0-9]{32}$)|(^$)"
-        },
-        {
             "name": "timezone",
-            "type": "AutoConnectSelect",
+            "type": "ACSelect",
             "selected": "Auto",
             "label": "TimeZone",
-            "options": [
+            "option": [
                 "Auto",
                 "GMT -12",
                 "GMT -11.5",
@@ -88,72 +72,72 @@ const char AuxSettings[] PROGMEM = R"---(
             ]
         },
         {
-            "name": "mqttserver",
+            "name": "ipgeolocation_apikey",
             "type": "ACInput",
             "value": "",
-            "placeholder": "MQTT broker server",
-            "label": "Server",
-            "pattern": "(^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$)|(^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]))*$)"
+            "placeholder": "API key for ipgeolocation.io",
+            "label": "ipgeolocation API Key",
+            "pattern": "(^[A-Fa-f0-9]{32}$)|(^$)"
         },
         {
-            "name": "channelid",
-            "type": "ACInput",
-            "value": "",
-            "label": "Channel ID"
-        },
-        {
-            "name": "userkey",
-            "type": "ACInput",
-            "value": "NRTFYGJ6TJFGX4RC",
-            "label": "User Key"
-        },
-        {
-            "name": "apikey",
-            "type": "ACInput",
-            "value": "",
-            "label": "API Key"
-        },
-        {
-            "name": "period",
-            "type": "ACRadio",
-            "label": "Update period",
-            "value": [
-                "30 sec.",
-                "60 sec.",
-                "180 sec."
-            ],
-            "arrange": "vertical",
-            "checked": 1
-        },
-        {
-            "name": "newline",
+            "name": "newline1",
             "type": "ACElement",
             "value": "<hr>"
         },
         {
-            "name": "uniqueid",
-            "type": "ACCheckbox",
-            "value": "unique",
-            "label": "Use APID unique",
-            "checked": false
+            "name": "mqttserver",
+            "type": "ACInput",
+            "value": "",
+            "placeholder": "MQTT server",
+            "label": "MQTT Server",
+            "pattern": "(^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$)|(^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]))*$)"
         },
         {
-            "name": "hostname",
+            "name": "mqttport",
             "type": "ACInput",
-            "label": "ESP host name",
-            "value": ""
+            "value": "1883",
+            "placeholder": "default 1883 or for TLS 8883",
+            "label": "MQTT port"
+        },
+        {
+            "name": "mqtttls",
+            "type": "ACCheckbox",
+            "value": "true",
+            "checked": "false",
+            "label": "MQTT use TLS"
+        },
+        {
+            "name": "mqttuser",
+            "type": "ACInput",
+            "value": "",
+            "placeholder": "MQTT user name",
+            "label": "MQTT user name"
+        },
+        {
+            "name": "mqttpasswd",
+            "type": "ACInput",
+            "value": "",
+            "placeholder": "MQTT password",
+            "label": "MQTT password"
+        },
+        {
+            "name": "mqttclientid",
+            "type": "ACInput",
+            "value": "RoboMowRC",
+            "placeholder": "MQTT client id",
+            "label": "MQTT client id"
         },
         {
             "name": "save",
             "type": "ACSubmit",
             "value": "Apply",
-            "uri": "/mqtt_setting"
+            "uri": "/settings"
         },
         {
             "name": "cancel",
-            "type": "ACSubmit",
+            "type": "ACButton",
             "value": "Cancel",
-            "uri": "/"
+            "action": "window.location.reload()"
         }
     ]
 }

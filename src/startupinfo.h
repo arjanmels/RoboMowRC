@@ -2,6 +2,7 @@
 #define __STARTUPINF_H_
 
 #include <Arduino.h>
+#include "info.h"
 
 /**
  * @brief Get Flash Mode Description
@@ -29,12 +30,15 @@ const char *getFlashModeDescription()
   }
 }
 
+#define FWVERSION
+
 /**
  * @brief Print startup information
  * 
  */
 void printStartupInfo()
 {
+  info.firmwareMD5=ESP.getSketchMD5();
   Serial.println();
   Serial.println();
   Serial.println();
@@ -44,7 +48,7 @@ void printStartupInfo()
   Serial.println();
   Serial.println();
   Serial.println(String("Running on: ESP32 r") + ESP.getChipRevision() + " @ " + ESP.getCpuFreqMHz() + "MHz on Arduino " + ARDUINO / 10000 + "." + ARDUINO / 100 % 100 + "." + ARDUINO % 100 + ", SDK " + ESP.getSdkVersion());
-  Serial.println(String("Code Size:  ") + ESP.getSketchSize() / 1024 + " kByte (MD5: " + ESP.getSketchMD5() + ")");
+  Serial.println(String("Code Size:  ") + ESP.getSketchSize() / 1024 + " kByte (MD5: " + info.firmwareMD5 + ")");
   Serial.println(String("Flash Size: ") + ESP.getFlashChipSize() / 1024 + " kByte (" + getFlashModeDescription() + " @ " + ESP.getFlashChipSpeed() / 1000 / 1000 + "MHz)");
   Serial.println(String("PSRAM Size: ") + ESP.getPsramSize() / 1024 + " kByte");
   Serial.println();
