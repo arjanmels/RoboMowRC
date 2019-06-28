@@ -160,9 +160,9 @@ public:
         config.apid = "RoboMowRC";
         config.psk = "12345678";
         config.bootUri = AC_ONBOOTURI_ROOT;
-        config.portalTimeout = 10;
-        config.retainPortal = false;
-        config.autoReset = false;
+//        config.portalTimeout = 10;
+//        config.retainPortal = false;
+//        config.autoReset = false;
         config.cssExtra = "label+input,label+select { position:sticky; left: 250px; width:300px!important; box-sizing: border-box;}";
         AutoConnect::config(config);
         settings = loadConfigAux("settings", FPSTR(AuxSettings));

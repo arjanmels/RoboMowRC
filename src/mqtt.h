@@ -38,7 +38,7 @@ void MqttNode(String node, String property, String name, String datatype = "stri
 
     MqttPublish(node + "/" + property + "/$name", name);
     if (datatype.length() > 0)
-        MqttPublish(node + "/" + property + "/$type", datatype);
+        MqttPublish(node + "/" + property + "/$datatype", datatype);
     if (unit.length() > 0)
         MqttPublish(node + "/" + property + "/$unit", unit);
     if (format.length() > 0)
@@ -49,19 +49,17 @@ void onMqttConnect(bool sessionPresent)
 {
     Serial.println(String("Mqtt server connected; session present: ") + sessionPresent);
 
-    MqttPublish("$homie", "4.0");
+    MqttPublish("$homie", "3.0");
     MqttPublish("$name", "RoboMow RC");
     MqttPublish("$state", "init");
     MqttPublish("$implementation", "RoboMowRC");
 
-    /*
-  MqttPublish("$localip", WiFi.localIP().toString());
-  MqttPublish("$mac", WiFi.macAddress());
-  MqttPublish("$fw/name", "RoboMowRC-firmware");
-  MqttPublish("$fw/version", info.firmwareMD5);
-  MqttPublish("$stats", "uptime,signal");
-  MqttPublish("$stats/interval", "60");
-*/
+    MqttPublish("$localip", WiFi.localIP().toString());
+    MqttPublish("$mac", WiFi.macAddress());
+    MqttPublish("$fw/name", "RoboMowRC-firmware");
+    MqttPublish("$fw/version", info.firmwareMD5);
+    MqttPublish("$stats", "uptime,signal");
+    MqttPublish("$stats/interval", "60");
 
     MqttPublish("$extensions", "");
     MqttPublish("$nodes", "location");
@@ -108,7 +106,7 @@ void mqttConnect(String const &server, int port, bool tls, String const &clienti
     else
         Mqtt.setServer(server.c_str(), port);
 
-   // Mqtt.setSecure(tls);
+    // Mqtt.setSecure(tls);
 
     Mqtt.setClientId(clientid.c_str());
     Mqtt.setCredentials(user.c_str(), passwd.c_str());

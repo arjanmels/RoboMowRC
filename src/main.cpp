@@ -32,6 +32,12 @@
 #include "display.h"
 #include "startupinfo.h"
 #include "mqtt.h"
+/*
+void mqttConnect(String const &server, int port, bool tls, String const &clientid, String const &user, String const &passwd) {}
+void mqttSetup() {}
+void mqttPublishStats() {}
+void mqttPublishLocation() {}
+*/
 
 // Define Hardware components
 TouchKey keyDown(12);
@@ -165,7 +171,7 @@ void updateSettings()
   String passwd = Portal.getSetting("mqttpasswd");
 
   Serial.println(String("diff: ") + port + "==" + prevPort + ", " + server + "==" + prevServer + ", " + tls + "==" + prevTls + ", " + clientid + "==" + prevClientid + ", " + user + "==" + prevUser + ", " + passwd + "==" + prevPasswd + ", ");
-  if (port != prevPort || server != prevServer || tls != prevTls || clientid != prevClientid || user != prevUser || passwd != prevPasswd)
+  if (!Mqtt.connected() || port != prevPort || server != prevServer || tls != prevTls || clientid != prevClientid || user != prevUser || passwd != prevPasswd)
   {
     prevPort = port;
     prevServer = server;
@@ -174,7 +180,8 @@ void updateSettings()
     prevUser = user;
     prevPasswd = passwd;
 
-    mqttConnect(server, port, tls, clientid, user, passwd);
+    if (server.length() > 0 && port > 0)
+      mqttConnect(server, port, tls, clientid, user, passwd);
   }
 }
 
@@ -187,6 +194,28 @@ static String settingsChanged(AutoConnectAux &aux, PageArgument &args)
     flagUpdateSettings = true;
   }
   return String();
+}
+
+void WiFiEvent(WiFiEvent_t event)
+{
+  Serial.println(String("WiFi event: ") + event);
+  switch (event)
+  {
+  case SYSTEM_EVENT_AP_START:
+    break;
+  case SYSTEM_EVENT_STA_START:
+    break;
+  case SYSTEM_EVENT_STA_CONNECTED:
+    break;
+  case SYSTEM_EVENT_AP_STA_GOT_IP6:
+    break;
+  case SYSTEM_EVENT_STA_GOT_IP:
+    break;
+  case SYSTEM_EVENT_STA_DISCONNECTED:
+    break;
+  default:
+    break;
+  }
 }
 
 /**
@@ -229,6 +258,7 @@ void setup()
       MDNS.addService("http", "tcp", 80);
   }
   Portal.on("/settings", settingsChanged);
+  WiFi.onEvent(WiFiEvent);
 
   Serial.println("Update Settings...");
   updateSettings();
@@ -255,6 +285,12 @@ void loop()
     }
   }
 */
+  if (WiFi.isConnected())
+  {
+    if (!Mqtt.connected())
+      Mqtt.connect();
+  }
+
   Portal.handleClient();
 
   static unsigned long prevSec = 0;
@@ -262,28 +298,33 @@ void loop()
   {
     prevSec = millis();
     displayStart();
-  }
 
-  static unsigned long prevMqtt = 0;
-  if (millis() > prevMqtt + 60000)
-  {
-    prevMqtt = millis();
-    mqttPublishStats();
-  }
-
-  // get the timezoneooffset at the start of every hour to allow for DST changes
-  static int prevHour = 0;
-  struct tm timeinfo;
-  if (getLocalTime(&timeinfo, 10) && timeinfo.tm_hour != prevHour)
-  {
-    prevHour = timeinfo.tm_hour;
-    getLocationFromIP();
+    // get the timezoneooffset at the start of every hour to allow for DST changes
+    static int prevHour = 0;
+    struct tm timeinfo;
+    if (getLocalTime(&timeinfo, 10) && timeinfo.tm_hour != prevHour)
+    {
+      prevHour = timeinfo.tm_hour;
+      if (WiFi.isConnected())
+        getLocationFromIP();
+    }
   }
 
   if (flagUpdateSettings)
   {
     updateSettings();
-    mqttPublishLocation();
+    if (WiFi.isConnected())
+      mqttPublishLocation();
     flagUpdateSettings = false;
+  }
+
+  if (WiFi.isConnected())
+  {
+    static unsigned long prevMqtt = 0;
+    if (millis() > prevMqtt + 60000)
+    {
+      prevMqtt = millis();
+      mqttPublishStats();
+    }
   }
 }
