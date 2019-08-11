@@ -29,12 +29,14 @@ RoboMowBase::MessageText RoboMowBase::unknownMessageText = {"Unknown", "Unknown 
 
 bool RoboMowBase::sendSimpleMsg(uint8_t type)
 {
+    log_i("Sending simple message: %d", type);
     uint8_t buf[] = {0xAA, 5, 0x1F, type, 0x00};
     return main.connection.sendPacket(buf, sizeof(buf));
 }
 
 bool RoboMowBase::sendMiscMsg(uint8_t misctype)
 {
+    log_i("Sending misc message: %d", misctype);
     uint8_t buf[] = {0xAA, 5, 0x1F, 22, misctype, 0x00};
     return main.connection.sendPacket(buf, sizeof(buf));
 }
@@ -76,7 +78,8 @@ void RoboMowBase::handleMessage(uint8_t *adata, size_t length)
         main.mSoftwareVersion = data.int8(1);
         main.mSoftwareRelease = data.int16(2);
         main.mMainboardVersion = data.int8(4);
-        log_i("RoboMow:GETCONFIG Family %u; Version %u; Revision %u, Mainboard %u\n", main.getFamily(), main.mSoftwareVersion, main.mSoftwareRelease, main.mMainboardVersion);
+        log_i("RoboMow:GETCONFIG Family %u; Version %u; Revision %u, Mainboard %u", main.getFamily(), main.mSoftwareVersion, main.mSoftwareRelease, main.mMainboardVersion);
+        main.updateType();
         break;
     }
     case MSGTYPE::USER:
@@ -87,11 +90,24 @@ void RoboMowBase::handleMessage(uint8_t *adata, size_t length)
             break;
         }
 
-        main.mTextMsgType = data.int8(0);
-        main.mTextMsgId = data.int16(1);
-        main.mSystemStopId = data.int16(3);
-        main.mSystemFailureId = data.int16(5);
-        log_i("RoboMow:USER Type: %u; TextId: %u; SystemStopId: %u, SystemFailureId: %u\n", main.mTextMsgType, main.mTextMsgId, main.mSystemStopId, main.mSystemFailureId);
+        uint8_t textMsgType = data.int8(0);
+        uint16_t textMsgId = data.int16(1);
+        uint16_t systemStopId = data.int16(3);
+        uint16_t systemFailureId = data.int16(5);
+        log_i("RoboMow:USER Type: %u; TextId: %u; SystemStopId: %u, SystemFailureId: %u", textMsgType, textMsgId, systemStopId, systemFailureId);
+        if (main.mTextMsgType != textMsgType || main.mTextMsgId != textMsgId || main.mSystemStopId != systemStopId || main.mSystemFailureId != systemFailureId)
+        {
+            main.mTextMsgType = textMsgType;
+            main.mTextMsgId = textMsgId;
+            main.mSystemStopId = systemStopId;
+            main.mSystemFailureId = systemFailureId;
+
+            if (textMsgType != 0)
+            {
+                main.updateMessage();
+                //  sendClearUserMessage();
+            }
+        }
         break;
     }
     default:

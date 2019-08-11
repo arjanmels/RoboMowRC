@@ -32,7 +32,7 @@
 
 extern NVS nvs;
 
-class AutoConnectSpiffs : public AutoConnect
+class AutoConnectExt : public AutoConnect
 {
     using AutoConnect::AutoConnect;
 
@@ -48,9 +48,9 @@ public:
 
 bool startCP(IPAddress ip);
 
-class RoboMowRCPortal : public AutoConnectSpiffs
+class RoboMowRCPortal : public AutoConnectExt
 {
-    using AutoConnectSpiffs::AutoConnectSpiffs;
+    using AutoConnectExt::AutoConnectExt;
 
 public:
     AutoConnectAux *home;

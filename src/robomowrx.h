@@ -35,16 +35,16 @@ class RoboMowRX : public RoboMowBase
     enum MSGTYPEMISC
     {
         MISC_ROBOTSTATE = 11,
+        MISC_CLEARUSERMESSAGE = 14,
     };
 
 public:
     using RoboMowBase::RoboMowBase;
     virtual void handleMessage(uint8_t *data, size_t length);
-    virtual bool sendGetRobotState()
-    {
-        return sendMiscMsg(MISC_ROBOTSTATE);
-    }
     virtual const MessageText &getMessageText(uint16_t id);
+
+    virtual bool sendGetRobotState() { return sendMiscMsg(MISC_ROBOTSTATE); }
+    virtual bool sendClearUserMessage() { return sendMiscMsg(MISC_CLEARUSERMESSAGE); }
 };
 
 #endif

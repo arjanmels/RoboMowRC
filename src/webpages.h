@@ -27,16 +27,17 @@
 
 #include <Arduino.h>
 
+// uri longer then 5 chars or so otherwise unexpected stack smashing
 const char HomeSettings[] PROGMEM = R"---(
 {
     "title": "Home",
-    "uri": "/home",
+    "uri": "/homepage",
     "menu": false,
     "element": [
         {
             "name": "style",
             "type": "ACStyle",
-            "value": "label+input,label+select { position:sticky; left: 250px; width:300px!important; box-sizing: border-box;}"
+            "value": "label+input,label+select{position:sticky;left:250px;width:300px!important;box-sizing:border-box;}"
         },
         {
             "name": "robomowstatus",
@@ -238,6 +239,29 @@ const char AuxSettings[] PROGMEM = R"---(
             "type": "ACButton",
             "value": "Cancel",
             "action": "window.location.reload()"
+        }
+    ]
+}
+)---";
+
+const char AuxSettings2[] PROGMEM = R"---(
+{
+    "title": "Settings2",
+    "uri": "/settings2",
+    "menu": true,
+    "element": [
+        {
+            "name": "style2",
+            "type": "ACStyle",
+            "value": "label+input,label+select { position:sticky; left: 250px; width:300px!important; box-sizing: border-box;}"
+        },
+        {
+            "name": "mbserial2",
+            "type": "ACInput",
+            "value": "",
+            "placeholder": "RoboMow motherboard serial number",
+            "label": "RoboMow serial",
+            "pattern": "[0-9]{13}"
         }
     ]
 }

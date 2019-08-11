@@ -90,6 +90,7 @@ void RoboMowRX::handleMessage(uint8_t *adata, size_t length)
                   "AntiTheftEnabled %u, AntiTheftActive %u, AntiTheftTempDisable %u, MinutesTillNextDepart %u, MinutesAutomaticOperation %u\n",
                   main.mSystemMode, main.mBatteryCapacity, main.mMowMotorActive, main.mSearchDockStation, main.mAutomaticOperationEdge, main.mAutomaticOperationScan,
                   main.mAntiTheftEnabled, main.mAntiTheftActive, main.mAntiTheftTempDisable, main.mMinutesTillNextDepart, main.mMinutesAutomaticOperation);
+            main.updateState();
             break;
         }
         default:

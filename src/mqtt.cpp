@@ -77,7 +77,7 @@ void onMqttConnect(bool sessionPresent)
 {
     clientPath = "homie/" + Portal.getSetting(CFG_MQTTCLIENTID) + "/";
 
-    Serial.println(String("Mqtt server connected; session present: ") + sessionPresent);
+    log_w("Mqtt server connected; session present: %d", sessionPresent);
 
     mqttPublish("$homie", "4.0");
     mqttPublish("$name", "RoboMow RC");
@@ -149,11 +149,7 @@ void onMqttConnect(bool sessionPresent)
     mqttPublishLocation();
 
     mqttPublish("$state", "ready");
-    Serial.println(String("All published"));
-}
-
-void mqttSetup()
-{
+    log_i("All published");
 }
 
 WiFiClient wifiClient;
@@ -163,7 +159,7 @@ void mqttConnect(String const &server, int port, bool tls, String const &clienti
 {
     if (Mqtt.connected())
     {
-        Serial.println("Disconnecting mqtt server");
+        log_w("Disconnecting mqtt server");
         mqttPublish("$state", "disconnected");
         Mqtt.disconnect();
     }
@@ -179,9 +175,8 @@ void mqttConnect(String const &server, int port, bool tls, String const &clienti
     else
         Mqtt.setClient(wifiClient);
 
-    Serial.println(F("Connecting to mqtt server"));
+    log_w("Connecting to mqtt server");
     Mqtt.connect(clientid.c_str(), user.c_str(), passwd.c_str(), (String("homie/") + clientid + "/$state").c_str(), 1, true, "lost");
-    Serial.println(F("Connected to mqtt server"));
     onMqttConnect(false);
 }
 
@@ -223,4 +218,9 @@ void mqttHandle()
         mqttReconnect();
     }
     Mqtt.loop();
+}
+
+void mqttSetup()
+{
+    mqttReconnect();
 }

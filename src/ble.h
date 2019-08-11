@@ -61,17 +61,17 @@ class MyClientCallback : public BLEClientCallbacks
 {
     void onConnect(BLEClient *pclient)
     {
-        Serial.println("BLE onConnect");
+        log_i("onConnect");
     }
 
     void onDisconnect(BLEClient *pclient)
     {
+        log_i("onDisconnect");
         connected = false;
+        doScan = true;
         robomowble.disconnect();
         mqttPublish("stats/blestrength", "0");
         mqttPublish("stats/bleconnected", "false");
-
-        Serial.println("BLE onDisconnect");
     }
 };
 
@@ -100,6 +100,7 @@ bool connectToServer()
         pClient->disconnect();
         return false;
     }
+
     pCharDataIn = pRemoteService->getCharacteristic(CHAR_DATA_IN_UUID);
     if (pCharDataIn == nullptr)
     {
@@ -107,6 +108,7 @@ bool connectToServer()
         pClient->disconnect();
         return false;
     }
+
     pCharDataOut = pRemoteService->getCharacteristic(CHAR_DATA_OUT_UUID);
     if (pCharDataOut == nullptr)
     {
@@ -222,13 +224,14 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
             BLEDevice::getScan()->stop();
             myDevice = new BLEAdvertisedDevice(advertisedDevice);
             doConnect = true;
-            doScan = true;
+            doScan = false;
         }
     }
 };
 
 void scanComplete(BLEScanResults results)
 {
+    log_i("scanComplete");
     doScan = true;
 }
 
@@ -253,55 +256,75 @@ void setupBLE()
     pBLEScan->setInterval(1349);
     pBLEScan->setWindow(449);
     pBLEScan->setActiveScan(true);
-
-    pBLEScan->start(15, scanComplete, false);
 }
-
-bool nopEnabled = true;
 
 uint8_t nopData[] = {0xAA, 0x05, 0x1F, 0x1B, 0x16};
 
-void loopBLE()
+void BLEHandle()
 {
-
     // If the flag "doConnect" is true then we have scanned for and found the desired
     // BLE Server with which we wish to connect.  Now we connect to it.  Once we are
     // connected we set the connected flag to be true.
     if (doConnect == true)
     {
+        doConnect = false;
         if (connectToServer())
         {
-            Serial.println("We are now connected to the BLE Server.");
-            mqttPublish("stats/blestrength", String(((RoboMowBLE &)robomow.getHandler()).getSignalStrength()));
+            Serial.println("Connected to RoboMow Device");
+            /*
+            log_i("A");
+            RoboMowBLE &handler = (RoboMowBLE &)(robomow.getHandler());
+            log_i("A: %d", handler);
+            uint8_t signalstrength = handler.getSignalStrength();
+            log_i("A");
+            mqttPublish("stats/blestrength", String(signalstrength));
+            log_i("A");
+            */
             mqttPublish("stats/bleconnected", "true");
+            log_i("A");
         }
         else
         {
-            Serial.println("We have failed to connect to the server; there is nothing more we will do.");
+            doScan = true;
+            log_w("Failed to connect to RoboMow Device");
         }
-        doConnect = false;
     }
 
     // If we are connected to a peer BLE Server, update the characteristic each time we are reached
     // with the current time since boot.
     if (connected)
     {
-        if (nopEnabled)
+        robomow.getHandler().handle();
+
+        static uint32_t prevRSSICheck = 0;
+        if (millis() - prevRSSICheck > 1000)
         {
-            static uint32_t prevNop;
-            if (millis() - prevNop > 2000)
+            prevRSSICheck = millis();
+            /* TODO: solve problem with getSignalStrength
+            static uint8_t prevSignalStrength = 0;
+            uint8_t newSignalStrength = ((RoboMowBLE &)robomow.getHandler()).getSignalStrength();
+            if (newSignalStrength != prevSignalStrength)
             {
-                Serial.println("BLE send NOP");
-                prevNop = millis();
-                robomow.getHandler().sendNop();
-                mqttPublish("stats/blestrength", String(((RoboMowBLE &)robomow.getHandler()).getSignalStrength()));
+                prevSignalStrength = newSignalStrength;
+                mqttPublish("stats/blestrength", String(newSignalStrength));
             }
+            */
         }
     }
     else if (doScan)
     {
-        BLEDevice::getScan()->start(10);
+        log_i("BLE start scanning...");
+
         doScan = false;
+        if (!BLEDevice::getScan()->start(30, scanComplete))
+        {
+            log_w("BLE scanning could not be started.");
+            doScan = true;
+        }
+        else
+        {
+            log_i("BLE scanning started.");
+        }
     }
 }
 

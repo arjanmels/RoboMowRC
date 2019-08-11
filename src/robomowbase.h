@@ -40,6 +40,8 @@ public:
 
 protected:
     RoboMow &main;
+    bool nopEnabled = true;
+    uint32_t prevNop = 0;
 
     size_t parseMessage(uint8_t *data, size_t max_length);
 
@@ -95,6 +97,25 @@ public:
     virtual bool sendGetRobotState()
     {
         return false;
+    }
+
+    virtual bool sendClearUserMessage()
+    {
+        return false;
+    }
+
+    virtual void handle()
+    {
+        if (nopEnabled)
+        {
+            if (millis() - prevNop > 2000)
+            {
+                prevNop = millis();
+                log_i("BLE send NOP");
+                sendNop();
+                //  sendGetRobotState();
+            }
+        }
     }
 
     void handleMessage(uint8_t *adata, size_t length);

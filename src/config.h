@@ -30,7 +30,7 @@
 
 #define LORA_FRAMECOUNTSTOREINTERVAL 10
 
-#define CUSTOM_STACK_SIZE (16384)
+#define CUSTOM_STACK_SIZE (15000)
 
 #define CFG_MQTTSERVER F("mqttserver")
 #define CFG_MQTTPORT F("mqttport")

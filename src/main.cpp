@@ -29,7 +29,7 @@
 #include "robomowwebserver.h"
 
 #include <PageBuilder.h>
-//#include <ESPmDNS.h>
+#include <ESPmDNS.h>
 #include <time.h>
 #include <HTTPClient.h>
 #include <TinyGPS++.h>
@@ -84,20 +84,24 @@ void taskIpgeolocationHandler(void *parameter)
 {
   while (true)
   {
+    log_i("Location, Free Heap: %d kByte, Free PSRAM: %d kByte, Minimum Stack Free: %d Bytes", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024, uxTaskGetStackHighWaterMark(NULL));
     vTaskSuspend(NULL);
 
     String apiKey = Portal.getSetting(CFG_GEOAPIKEY);
     if (!WiFi.isConnected())
     {
-      Serial.printf("Failed to get timezone: wifi not connected\n");
+      log_w("Failed to get timezone: wifi not connected");
+      continue;
     }
-    if (apiKey.length() == 0)
+    else if (apiKey.length() == 0)
     {
-      Serial.println("No API key for ipgeolocation.io");
+      log_w("No API key for ipgeolocation.io");
+      continue;
     }
     else
     {
-      Serial.println("Trying to get location and timezone from ipgeolocation.io");
+
+      log_i("Trying to get location and timezone from ipgeolocation.io");
 
       String url = "https://api.ipgeolocation.io/timezone?apiKey=" + apiKey;
       if (gps.location.age() <= GPS_MAX_AGE_FOR_TIMEZONE)
@@ -106,7 +110,6 @@ void taskIpgeolocationHandler(void *parameter)
       HTTPClient http;
       http.begin(url);
       int httpCode = http.GET();
-      // httpCode will be negative on error
       if (httpCode == HTTP_CODE_OK)
       {
         String payload = http.getString();
@@ -128,7 +131,7 @@ void taskIpgeolocationHandler(void *parameter)
           info.satellites = 0;
         }
 
-        Serial.printf("Got location from ipgeolocation.io: %.5f, %.5f, Timezone: %s\n", info.latitude, info.longitude, info.timezone.c_str());
+        log_i("Got location from ipgeolocation.io: %.5f, %.5f, Timezone: %s", info.latitude, info.longitude, info.timezone.c_str());
 
         http.end();
         flagUpdateLocation = true;
@@ -136,11 +139,11 @@ void taskIpgeolocationHandler(void *parameter)
       }
       else
       {
-        Serial.printf("Failed to get timezone from server (%d: %s).\n", httpCode, http.errorToString(httpCode).c_str());
+        log_w("Failed to get timezone from server (%d: %s).", httpCode, http.errorToString(httpCode).c_str());
       }
     }
 
-    // could not get form ipgeolocation
+    // Error handling when could not get from ipgeolocation
     if (gps.location.age() > GPS_MAX_AGE_FOR_TIMEZONE)
     {
       info.source = "none";
@@ -196,12 +199,12 @@ void getLocationFromIP()
     prevCount--;
     vTaskResume(taskIpgeolocation);
   }
-  Serial.println(String("PrevCount: ") + prevCount);
+  log_i("PrevCount: %d", prevCount);
 }
 
-void updateSettings()
+void updateTimeSettings()
 {
-  Serial.println("Updating settings");
+  log_i("Updating time settings");
 
   static String prevTimeZone;
   static int prevGmtOffset;
@@ -220,7 +223,7 @@ void updateSettings()
       info.timezone = timeZone;
     }
 
-    Serial.println(String("Configuring time with offset: ") + info.gmtOffset + " and DST Offset: " + info.daylightOffset);
+    log_i("Configuring time with offset: %d and DST offset: %d", info.gmtOffset, info.daylightOffset);
     configTime(info.gmtOffset, info.daylightOffset, "pool.ntp.org", "time.nist.gov", "time.windows.com");
   }
 
@@ -231,7 +234,6 @@ void updateSettings()
     prevApiKey = apiKey;
     getLocationFromIP();
   }
-  mqttReconnect();
 }
 
 static String settingsChanged(AutoConnectAux &aux, PageArgument &args)
@@ -247,7 +249,7 @@ static String settingsChanged(AutoConnectAux &aux, PageArgument &args)
 
 void WiFiEvent(WiFiEvent_t event)
 {
-  Serial.println(String("WiFi event: ") + event);
+  log_i("WiFi event: %d", event);
   switch (event)
   {
   case SYSTEM_EVENT_AP_START:
@@ -297,7 +299,7 @@ void setup()
   TaskHandle_t loopTaskHandle = NULL;
   xTaskCreateUniversal(loopTask, "loopTask", CUSTOM_STACK_SIZE, NULL, 1, &loopTaskHandle, CONFIG_ARDUINO_RUNNING_CORE);
   vTaskDelete(NULL);
-  Serial.println("Should not be reached...");
+  log_e("Should not be reached...");
 #else
   setup2();
 #endif
@@ -306,7 +308,7 @@ void setup()
 void setup2()
 {
   // Create RTOS items
-  xTaskCreate(taskIpgeolocationHandler, "ipgeolocation", 4096, NULL, 1, &taskIpgeolocation);
+  xTaskCreate(taskIpgeolocationHandler, "ipgeolocation", 6000, NULL, 1, &taskIpgeolocation);
 
   // Initialize Serial Speed
   Serial.begin(115200);
@@ -314,8 +316,7 @@ void setup2()
   // Show initializing message (this takes a while due to MD5sum calculation etc.)
   printStartupInfo();
 
-  Serial.println("Start NVS...");
-  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
+  log_i("Start NVS... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
   nvs.init("settings");
 
   /*  Serial.println("Start Display...");
@@ -324,58 +325,45 @@ void setup2()
   displayStart();
 */
 
-  Serial.println("Start MQTT...");
-  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
-  mqttSetup();
-
-  Serial.println("Reset WIFI...");
-  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
+  log_i("Reset WiFi... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
   resetWiFi();
   WiFi.onEvent(WiFiEvent);
 
-  Serial.println("Start Websocket...");
-  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
-  //  websocketSetup();
-
-  Serial.println("Start Webserver...");
-  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
+  log_i("Start Webserver... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
 
   Portal.on("/settings", settingsChanged);
   if (Portal.begin())
   {
     Serial.println("WiFi connected: " + WiFi.localIP().toString());
-    /*    Serial.println("Start MDNS...");
-    log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
+    log_i("Start mDNS Server... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
     if (MDNS.begin("RoboMowRC"))
       MDNS.addService("http", "tcp", 80);
-      */
-  }
 
-  Serial.println("Start GPS receiver...");
-  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
-  //GPS Receiver settings
+    log_i("Start MQTT Client... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
+    mqttSetup();
+
+    /*
+    log_i("Start Websocket Server... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
+    websocketSetup();
+    */
+  }
+  log_i("Start BLE... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
+  setupBLE();
+
+  log_i("Start LoRa... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
+  setupLora();
+
+  log_i("Start GPS... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
   Serial1.begin(9600, SERIAL_8N1, 12, 15);
 
   /*
-  Serial.println("Start Display...");
-  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
+  log_i("Start Display... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
   displayStart();
 */
 
-  Serial.println("Start BLE...");
-  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
-  setupBLE();
-
-  Serial.println("Start LoRA...");
-  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
-  setupLora();
-
-  Serial.println("Update Settings...");
-  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
-  updateSettings();
-
-  Serial.println("Starting Main Loop...");
-  Serial.println(String("Free heap: ") + ESP.getFreeHeap() / 1024 + " kByte");
+  log_i("Updating time settings...");
+  updateTimeSettings();
+  Serial.printf("\nStarting Main Loop... (Free heap: %d kByte, Free PSRAM: %d kByte)\n", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
 }
 
 /**
@@ -384,12 +372,10 @@ void setup2()
  */
 void loop()
 {
-
-  //ArduinoOTA.handle();
-  mqttHandle();
   Portal.handleClient();
+  mqttHandle();
   GPSHandle();
-  loopBLE();
+  BLEHandle();
   //  websocketHandle();
 
   static unsigned long prevSec = 0;
@@ -412,7 +398,7 @@ void loop()
 
   if (flagUpdateLocation)
   {
-    updateSettings();
+    updateTimeSettings();
     mqttPublishLocation();
     flagUpdateLocation = false;
   }
@@ -423,5 +409,12 @@ void loop()
   {
     prevMqtt = millis();
     mqttPublishStats();
+  }
+
+  static unsigned long prevBeat = 0;
+  if (millis() - prevBeat > 1000)
+  {
+    prevBeat = millis();
+    log_i("Heartbeat: %7ld, Free Heap: %d kB, PSRAM: %d kB, Minimum Stack: %d B", prevBeat, ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024, uxTaskGetStackHighWaterMark(NULL));
   }
 }

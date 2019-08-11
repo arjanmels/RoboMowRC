@@ -31,7 +31,7 @@
 
 extern NVS nvs;
 
-bool AutoConnectSpiffs::saveParamsToNVM(AutoConnectAux &aux)
+bool AutoConnectExt::saveParamsToNVM(AutoConnectAux &aux)
 {
     AutoConnectElementVT elements = aux.getElements();
     for (AutoConnectElement &element : elements)
@@ -42,7 +42,7 @@ bool AutoConnectSpiffs::saveParamsToNVM(AutoConnectAux &aux)
     return true;
 }
 
-bool AutoConnectSpiffs::saveParamsToNVM(PageArgument &args)
+bool AutoConnectExt::saveParamsToNVM(PageArgument &args)
 {
     if (args.size() == 0)
         return true;
@@ -55,7 +55,7 @@ bool AutoConnectSpiffs::saveParamsToNVM(PageArgument &args)
     return true;
 }
 
-bool AutoConnectSpiffs::loadParamsFromNVM(AutoConnectAux &aux)
+bool AutoConnectExt::loadParamsFromNVM(AutoConnectAux &aux)
 {
     for (AutoConnectElement &element : aux.getElements())
     {
@@ -68,13 +68,13 @@ bool AutoConnectSpiffs::loadParamsFromNVM(AutoConnectAux &aux)
     return true;
 }
 
-String AutoConnectSpiffs::saveParams(AutoConnectAux &aux, PageArgument &args)
+String AutoConnectExt::saveParams(AutoConnectAux &aux, PageArgument &args)
 {
     saveParamsToNVM(args);
     return "";
 }
 
-AutoConnectAux *AutoConnectSpiffs::loadConfig(String pageName)
+AutoConnectAux *AutoConnectExt::loadConfig(String pageName)
 {
     AutoConnectAux *auxPage = aux("/" + pageName);
     if (auxPage == nullptr)
@@ -84,13 +84,13 @@ AutoConnectAux *AutoConnectSpiffs::loadConfig(String pageName)
     return auxPage;
 }
 
-AutoConnectAux *AutoConnectSpiffs::loadConfigAux(String pageName, const __FlashStringHelper *auxString)
+AutoConnectAux *AutoConnectExt::loadConfigAux(String pageName, const __FlashStringHelper *auxString)
 {
     load(auxString);
     return loadConfig(pageName);
 }
 
-AutoConnectAux *AutoConnectSpiffs::loadConfigAux(String pageName, const char *auxString)
+AutoConnectAux *AutoConnectExt::loadConfigAux(String pageName, const char *auxString)
 {
     load(auxString);
     return loadConfig(pageName);
@@ -104,6 +104,8 @@ bool startCP(IPAddress ip)
 
 String RoboMowRCPortal::getSetting(String setting)
 {
+    if (settings == nullptr)
+        return String();
     AutoConnectElement *element = settings->getElement(setting);
     if (element == nullptr)
         return String();
@@ -154,8 +156,8 @@ RoboMowRCPortal Portal;
 
 void handleNotFound()
 {
-    Portal.host().sendHeader("Location", "/home", true);
-    Portal.host().send(302, "text/html", "<html><body>Redirecting to <a href=\"/home\">Home Page</a></body></html>");
+    Portal.host().sendHeader("Location", "/homepage", true);
+    Portal.host().send(302, "text/html", "<html><body>Redirecting to <a href=\"/homepage\">Home Page</a></body></html>");
 }
 
 bool RoboMowRCPortal::begin()
@@ -169,21 +171,21 @@ bool RoboMowRCPortal::begin()
     config.apid = "RoboMowRC";
     config.psk = "12345678";
     config.portalTimeout = 30000;
-    config.bootUri = AC_ONBOOTURI_HOME;
-    config.homeUri = "/home";
-    //        config.retainPortal = false;
-    //        config.autoReset = false;
+    //    config.bootUri = AC_ONBOOTURI_HOME;
+    //    config.homeUri = "/home";
+    //    config.retainPortal = false;
+    config.autoReset = false;
     AutoConnect::config(config);
 
-    //    home = loadConfigAux("home", FPSTR(HomeSettings));
-    settings = loadConfigAux("settings", FPSTR(AuxSettings));
+    settings = loadConfigAux("settings", AuxSettings);
+    home = loadConfigAux("homepage", HomeSettings);
 
-    if (/* home == nullptr || */ settings == nullptr)
+    if (home == nullptr || settings == nullptr)
     {
-        log_e("[AC+] Could not load settings");
-        while (1)
+        log_e("Could not load settings");
+        while (true)
             ;
     }
 
-    return AutoConnectSpiffs::begin(nullptr, nullptr, 5000);
+    return AutoConnectExt::begin(nullptr, nullptr, 5000);
 }

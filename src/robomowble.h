@@ -104,8 +104,7 @@ public:
     bool isConnected() { return pClient != NULL; }
     uint8_t getSignalStrength()
     {
-        if (
-            pClient == NULL)
+        if (pClient == NULL)
             return 0;
         else
             return (pClient->getRssi() + 100) * 100 / 75;

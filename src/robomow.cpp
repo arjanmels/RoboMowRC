@@ -32,10 +32,10 @@
 
 void RoboMow::updateType()
 {
-    mqttPublish("robomow/type", mFamily == RS ? "RS" : mFamily == RC ? "RC" : mFamily == RX ? "RX" : "Unknown");
-    mqttPublish("robomow/swversion", String(mSoftwareVersion));
-    mqttPublish("robomow/swversion", String(mSoftwareRelease));
-    mqttPublish("robomow/hwversion", String(mMainboardVersion));
+    mqttPublish("robomowversion/type", mFamily == RS ? "RS" : mFamily == RC ? "RC" : mFamily == RX ? "RX" : "Unknown");
+    mqttPublish("robomowversion/swversion", String(mSoftwareVersion));
+    mqttPublish("robomowversion/swrevision", String(mSoftwareRelease));
+    mqttPublish("robomowversion/hwversion", String(mMainboardVersion));
 }
 
 void RoboMow::updateMessage()
@@ -47,7 +47,7 @@ void RoboMow::updateMessage()
     mMsgText = msgText.name;
     mMsgDescription = msgText.description;
 
-    mqttPublish("robomow/statustext", mMsgText);
+    mqttPublish("robomow/status", mMsgText);
     mqttPublish("robomow/statusdescription", mMsgDescription);
 }
 

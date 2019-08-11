@@ -58,7 +58,7 @@ static uint32_t framecountNVM;
 void setupLora()
 {
 
-    Serial.println("Start LoRa");
+    log_i("Start LoRa");
 
     pinMode(23, OUTPUT);
     digitalWrite(23, LOW);
@@ -71,13 +71,13 @@ void setupLora()
     lora.setDatarate(SF7BW125); // 10 is the maximum static SF (11 & 12 can only be used together with ADR)
     if (!lora.begin(5, 19, 27))
     {
-        Serial.println("LoRa failed!");
+        log_e("LoRa initialization failed!");
         while (true)
             ;
     }
     nvs.get(CFG_LORAFRAMECOUNT, framecountNVM);
     lora.frameCounter = framecountNVM;
-    Serial.printf("LoRa framecounter: %u\n", lora.frameCounter);
+    log_i("LoRa framecounter: %u", lora.frameCounter);
 }
 
 void loopLora()
@@ -108,14 +108,13 @@ void sendLocationLora(uint8_t status, float lat = 0.0, float lon = 0.0, float al
         {
             prev6hours = nowmillis;
             lora.setDatarate(SF12BW125);
-            Serial.print("Sending LoRa message with SF12: ");
+            log_i("Sending LoRa message with SF12: framecount: %u, status: %d, location: %.5f, %.5f, %.5f, age: %d", lora.frameCounter, status, lat, lon, alt, age / 1000);
         }
         else
         {
             lora.setDatarate(SF7BW125);
-            Serial.print("Sending LoRa message with SF7: ");
+            log_i("Sending LoRa message with SF7: framecount: %u, status: %d, location: %.5f, %.5f, %.5f, age: %d", lora.frameCounter, status, lat, lon, alt, age / 1000);
         }
-        Serial.printf("framecount: %u, status: %d, location: %.5f, %.5f, %.5f, age: %d\n", lora.frameCounter, status, lat, lon, alt, age / 1000);
 
         time_t now;
         time(&now);
