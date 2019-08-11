@@ -1,0 +1,178 @@
+1, "rc_1", "Test Base Station Position ", "Starting One-Time Setup. Place the mower inside the lawn, 3 m. before the Base Station entry, facing the Perimeter Wire, and press OK.", true
+2, "rc_2", "Peg Base Station", "The Test or Calibration performed has Failed.", true
+3, "rc_3", "Test Wire Position", "Walk alongside the mower while it is following the edge to test the wire position.", true
+7, "rc_7", "Passed", "Operation Passed.", true
+8, "rc_8", "Operation Failed.", "The Test or Calibration performed has Failed.", true
+10, "rc_10", "Mow Overheat", "Switch Power Off. Mowing motor is loaded. Check grass height and insure nothing is obstructing the blade rotation.", true
+11, "rc_11", "Drive Overheat", "The mowing motor(s) are overheating. Wait for cooldown. Operation will restart automatically.", true
+12, "rc_12", "No Wire Signal", "Check Power Box is powered and On. Check all connection from there to Base Station.", true
+13, "rc_13", "Recharge Battery", "Low battery voltage. Recharge the battery.", true
+14, "rc_14", "Front Wheel Problem", "Switch Power Off. Insure nothing is obstructing front wheel from turning. Check high grass, slope, or objects causing the front to lift.", true
+15, "rc_15", "Key Pressed", "One of the operating panel buttons is constantly pressed.", true
+16, "rc_16", "Low Temperature", "Ambiance temperature is lower than 5ºC (41ºF). The mower will resume automatically.", true
+18, "rc_18", "Short Operation Time", "The actual operation time was shorter than expected.", true
+20, "rc_20", "Rain Detected", "The operation is delayed due to rain detection. The mower will resume automatically.", true
+21, "rc_21", "Check Mowing Height", "Switch Power Off. Mowing motor is loaded. Check grass height and insure nothing is obstructing the blade rotation.", true
+22, "rc_22", "Check Mowing Motor", "Switch Power Off. Mowing motor is loaded. Check grass height and insure nothing is obstructing the blade rotation.", true
+23, "rc_23", "Check Power", "Check Power Box is powered and On. Check all connection from there to Base Station. Check charging contacts.", true
+24, "rc_24", "Keep Charged", "Keep your mower in charging at all times, if it is not being used.", true
+25, "rc_25", "Switch Off Now", "For safety purposes, switch the power off before lifting the mower.", true
+26, "rc_26", "Base Problem", "Your mower is failing to enter the Base Station. Adjust position and clean charging contacts.", true
+27, "rc_27", "Start Elsewhere", "Check ground where stuck and drive wheel rotation is not blocked. Restart elsewhere.", true
+28, "rc_28", "Cross Outside", "Some issue was found along the perimeter. Check ground, increase cutting height, or move wire inward.", true
+29, "rc_29", "Incorrect Connection", "Swap (reverse) the green wire connection at the plot connector.", true
+30, "rc_30", "Start Inside", "Place mower inside the lawn, and Restart.", true
+31, "rc_31", "Stuck in Place", "Check ground where stuck and drive wheel rotation is not blocked. Restart elsewhere.", true
+32, "rc_32", "Turn System Switch 'On'", "Your mower is inside the Base Station, but is switched off. Switch it on to allow charging.", true
+35, "rc_35", "Activating Motors", "Stay clear of the mower. Motors will now start.", true
+36, "rc_36", "Calibrate Front Wheel 1", "Place the mower on the ground then press the OK", true
+37, "rc_37", "Calibrate Front Wheel 2", "Lift mower then press the OK.", true
+38, "rc_38", "Calibrate Wire Sensor 1", "Turn wire signal 'Off' then press OK.", true
+39, "rc_39", "Calibrate Wire Sensor 2", "Turn wire signal 'On' then press OK.", true
+42, "rc_42", "Learning Edge Distance", "Your mower is learning the distance of the Perimeter Wire in a Separated Zone. Press STOP after completing a full circle around the lawn.", true
+43, "rc_43", "Going to Sub-Zone Entry…", "Going to Sub-Zone Entry…", false
+44, "rc_44", "Place into Base Station", "Place the mower in the Base Station before starting the process of adding a Sub-Zone.", true
+48, "rc_48", "Test Edge Mode", "Place the mower into the Base Station. Press OK to start. The mower will follow Edge back to Base Station.", true
+49, "rc_49", "Test Near Wire Follow", "Place the mower into the Base Station. Press OK to start. The mower will follow Edge back to Base Station.", true
+50, "rc_50", "Demo Mode", "Mower is in Demo Mode.", true
+51, "rc_51", "Reposition Base Station", "Your mower could not enter the Base Station successfully. Please reposition centered along the wire for smooth entry. Press OK to continue.", true
+52, "rc_52", "Adjust the Wire", "The mower has bumped into something along the edge and backed up. Move the wire slightly inward. Press OK to continue.", true
+60, "rc_60", "Intensity Error", "The Intensity set is too high for your lawn area.", true
+61, "rc_61", "Decrease Inactive Time", "Too many Inactive days/hours have been set for your lawn area or Mowing Frequency (Interval) is too high.", true
+63, "rc_63", "Inactive Hours 2 modified via App", "Inactive hours cannot be set via the mower as long as \"Inactive Hours 2\" are enabled via the app.", true
+64, "rc_64", "No Base Station Found", "\"Searching Base Station\" operation cannot be performed in a zone without a Base Station.", true
+85, "rc_85", "Invalid system configuration", "The installed Software and Hardware configurations are not compatible.", true
+86, "rc_86", "Waiting for Signal…", "No signal is detected and operation has stopped. Check all power cable connections. The mower will resume automatically once power is restored.", true
+87, "rc_87", "Mow Motor Overheat", "The mowing motor has been overloaded for too long. The mower will resume automatically.", true
+88, "rc_88", "Drive Motor Overheat", "The drive motor(s) has been overloaded for too long. The mower will resume automatically.", true
+89, "rc_89", "Child Lock is activated", "To operate the mower press one of the operating mode buttons and then to press the OK to confirm.", true
+90, "rc_90", "Message", "Subzone 1 Entry Problem", true
+91, "rc_91", "Message", "Subzone 2 Entry Problem", true
+92, "rc_92", "Message", "Subzone 3 Entry Problem", true
+93, "rc_93", "Message", "Subzone 4 Entry Problem", true
+94, "rc_94", "Raise mowing height", "Raise mowing height when activating the TurboMow mode.", true
+
+
+19, "rs_19", "Failure", "Failure", true
+24, "rs_24", "No Wire Signal", "Check Power Box is powered and On. Check all connection from there to Base Station.", true
+25, "rs_25", "Start Inside", "Place mower inside the lawn, and Restart.", true
+30, "rs_30", "Key Pressed", "One of the operating panel buttons is constantly pressed.", true
+32, "rs_32", "Bumper Pressed", "Move mower away from object that presses against the bumper.", true
+33, "rs_33", "Front Wheel Problem", "Switch Power Off. Insure nothing is obstructing front wheel from turning. Check high grass, slope, or objects causing the front to lift.", true
+36, "rs_36", "Cross Outside", "Some issue was found along the perimeter. Check ground, increase cutting height, or move wire inward.", true
+37, "rs_37", "Stuck in Place", "Check ground where stuck and drive wheel rotation is not blocked. Restart elsewhere.", true
+38, "rs_38", "Check Power", "Check Power Box is powered and On. Check all connection from there to Base Station. Check charging contacts.", true
+39, "rs_39", "Incorrect Connection", "Swap (reverse) the green wire connection at the plot connector.", true
+40, "rs_40", "Base Problem", "The mower is failing to enter the Base Station. Adjust position and clean charging contacts.", true
+50, "rs_50", "Recharge Battery", "Low battery voltage. Recharge the battery.", true
+52, "rs_52", "Switch Off Now", "For safety purposes, switch the power off before lifting the mower.", true
+59, "rs_59", "Check Mowing Height", "Switch Power Off. Mowing motor is loaded. Check grass height and insure nothing is obstructing the blade rotation.", true
+60, "rs_60", "Rain Detected", "The operation is delayed due to rain detection. The mower will resume automatically.", true
+62, "rs_62", "Alarm will soon Activate.", "Press OK to deactivate theft protection alarm.", true
+65, "rs_65", "Handle Lifted", "The handle is lifted while trying to start the operation. Push the carrying handle down back to its position to enable automatic operation.", true
+79, "rs_79", "Start Elsewhere", "Check ground where stuck and drive wheel rotation is not blocked. Restart elsewhere.", true
+80, "rs_80", "Mow Overheat", "The mowing motor(s) are overheating. Wait for cooldown. Operation will restart automatically.", true
+84, "rs_84", "Waiting for Signal…", "No signal is detected and operation has stopped. Check all power cable connections. The mower will resume automatically once power is restored.", true
+135, "rs_135", "Intensity Error", "The Intensity set is too high for your lawn area.", true
+138, "rs_138", "Decrease Inactive Time", "Too many Inactive days/hours have been set for your lawn area or Mowing Frequency (Interval) is too high.", true
+139, "rs_139", "Drive Overheat", "The drive motor(s) are overheating. Wait for cooldown. The mower will resume automatically.", true
+163, "rs_163", "Keys Locked", "Child Lock feature has been activated. To deactivate - press UP button and then press BACK button on mower's panel", true
+169, "rs_169", "Reposition Base Station", "The mower could not enter the Base Station successfully. Please reposition centered along the wire for smooth entry. Press OK to continue.", true
+170, "rs_170", "Drive Motor Overheat", "The drive motor(s) has been overloaded for too long. The mower will resume automatically.", true
+171, "rs_171", "Peg Base Station", "Insert all the stakes into the Base Station, and press OK.", true
+172, "rs_172", "Test Wire Position", "Walk alongside the mower while it is following the edge to test the wire position.", true
+173, "rs_173", "Adjust the Wire", "The mower has bumped into something along the edge and backed up. Move the wire slightly inward. Press OK to continue.", true
+174, "rs_174", "Wire Test Succeeded!", "Wire Test Succeeded!", true
+175, "rs_175", "Testing Wire…", "TTesting Wire…", true
+244, "rs_244", "Short Operation Time", "The actual operation time was shorter than expected.", true
+245, "rs_245", "Low Temperature", "Place the mower into the Base Station before starting the process of adding a Sub-Zone.", true
+246, "rs_246", "Check Mowing Motor", "Switch Power Off. Mowing motor is loaded. Check grass height and insure nothing is obstructing the blade rotation.", true
+282, "rs_282", "Raise mowing height", "Raise mowing height when activating the TurboMow mode.", true
+2050, "rs_2050", "Subzone Entry Problem", "Subzone Entry Problem", true
+10000, "rs_10000", "Learning Edge Distance", "Robomow is learning the distance of the Perimeter Wire in a Separated Zone. Press STOP after completing a full circle around the lawn.", true
+10002, "rs_10002", "No Base Station Found", "Place the mower into the Base Station before starting the process of adding a Sub-Zone.", true
+
+1, "rx_1", "Passed", "Operation Passed.", true
+2, "rx_2", "Operation Failed.", "The Test or Calibration performed has Failed.", true
+3, "rx_3", "Wait", "Please wait for the process to finish…", true
+4, "rx_4", "No Wire Signal", "Confirm power supply is plugged into the power outlet. Check power supply and perimter wire connection to the Base Station. Check the indication on the Base Station.", true
+5, "rx_5", "Recharge Battery", "Low battery voltage. Recharge the battery.", true
+6, "rx_6", "Wheels in The Air", "Drive wheels have lost their grip with the ground or the mower is lifted.", true
+7, "rx_7", "Key Pressed", "One of the operating panel buttons is constantly pressed.", true
+8, "rx_8", "Low Temperature", "Ambiance temperature is lower than 5ºC (41ºF). The mower will resume automatically.", true
+9, "rx_9", "Operation time is completed", "", false
+10, "rx_10", "Check Mowing Height", "Switch Power Off. Mowing motor is loaded. Check grass height and insure nothing is obstructing the blade rotation.", true
+11, "rx_11", "Check Power", "Confirm power supply is plugged into the power outlet. Check power supply connection to the Base Station. Check charging contacts.", true
+12, "rx_12", "Keep Charged", "Keep your mower charged at all times, if it is not being used.", true
+13, "rx_13", "Base Problem", "The mower is failing to enter the Base Station. Adjust position and clean charging contacts.", true
+14, "rx_14", "Start Elsewhere", "Check the ground and the drive wheels. Restart elsewhere. If persists, refer to Troubleshooting section of the User Guide.", true
+15, "rx_15", "Cross Outside", "Some issue was found along the perimeter. Check ground, increase cutting height, or move wire inward.", true
+16, "rx_16", "Incorrect Connection", "Swap (reverse) the perimeter wire connection at the Base Station.", true
+17, "rx_17", "Start Inside", "Place the mower inside the lawn and start it again.", true
+18, "rx_18", "Stuck in Place", "Check ground where stuck and drive wheel rotation is not blocked. Restart elsewhere.", true
+19, "rx_19", "Starting Point 1 Problem", "", false
+20, "rx_20", "Starting Point 2 Problem", "", false
+21, "rx_21", "Subzone 3 Entry Problem", "", false
+22, "rx_22", "Lift Calibration Required", "Press GO button on the mower to start lift sensor calibration process", true
+23, "rx_23", "Base search is disabled", "", false
+24, "rx_24", "Short Operation Time", "The actual operation time was shorter than expected.", true
+25, "rx_25", "Waiting for Signal…", "No signal is detected and operation has stopped. Check all power cable connections. The mower will resume automatically once power is restored.", true
+26, "rx_26", "Calibrate Wire Sensor 1", "Turn wire signal 'Off' then press GO.", true
+27, "rx_27", "Calibrate Wire Sensor 2", "Turn wire signal 'On' then press GO.", true
+28, "rx_28", "Check Mowing Motor", "Switch Power Off. Mowing motor is loaded. Check grass height and insure nothing is obstructing the blade rotation.", true
+34, "rx_34", "Test Wire Position", "Walk alongside your mower while it is following the edge to test the wire position.", true
+35, "rx_35", "Test Edge Mode", "Place the mower into the Base Station. Press GO to start. The mower will follow Edge back to Base Station.", true
+36, "rx_36", "Test Near Wire Follow", "Place mower near the edge. Press OK to start. The mower will follow Edge at maximum Near Wire Follow distance.", true
+37, "rx_37", "Demo Mode", "Mower is in Demo Mode.", true
+40, "rx_40", "Place Robomow in Base Station", "Place mower near the edge. Press OK to start. The mower will follow Edge at maximum Near Wire Follow distance.", true
+41, "rx_41", "Alarm will soon Activate.", "Press OK to deactivate theft protection alarm.", true
+42, "rx_42", "Mow Motor Overheat", "The mowing motor has been overloaded for too long. The mower will resume automatically.", true
+43, "rx_43", "Mow Overheat", "The mowing motor(s) are overheating. Wait for cooldown. Operation will restart automatically.", true
+44, "rx_44", "Warning! Motors will now be activated.", "", true
+45, "rx_45", "Calibrate Lift Sensor 1", "Place the mower on the ground then press GO", true
+46, "rx_46", "Calibrate Lift Sensor 2", "Lift mower then press GO.", true
+47, "rx_47", "Mower is Lifted", "For safety purposes, switch the power off before lifting the mower.", true
+48, "rx_48", "Theft protection is active", "It's impossible to switch the mower off as long as the theft protection is active.", true
+50, "rx_50", "Disabling Device Removed", "Insert the Disabling Device to operate the mower", true
+51, "rx_51", "Standby Mode", "Your mower is currently charging in standby mode. Switch ON for operation.", true
+52, "rx_52", "Adjust the Wire", "The mower has bumped into something along the edge and backed up. Move the wire slightly inward. Press OK to continue.", true
+60, "rx_60", "Intensity Error", "The Intensity set is too high for your lawn area.", true
+61, "rx_61", "Decrease Inactive Time", "Too many Inactive days/hours have been set for your lawn area or Mowing Frequency (Interval) is too high.", true
+62, "rx_62", "Alarm will soon Activate.", "Press OK to deactivate theft protection alarm.", true
+63, "rx_63", "Inactive Hours 2 modified via App", "Inactive hours cannot be set via the mower as long as \"Inactive Hours 2\" are enabled via the app.", true
+64, "rx_64", "No Base Station Found", "\"Searching Base Station\" operation cannot be performed in a zone without a Base Station.", true
+85, "rx_85", "Invalid system configuration", "The installed Software and Hardware configurations are not compatible.", true
+86, "rx_86", "Waiting for Signal…", "No signal is detected and operation has stopped. Check all power cable connections. The mower will resume automatically once power is restored.", true
+87, "rx_87", "Mow Motor Overheat", "The mowing motor has been overloaded for too long. The mower will resume automatically.", true
+88, "rx_88", "Drive Motor Overheat", "The drive motor(s) has been overloaded for too long. The mower will resume automatically.", true
+89, "rx_89", "Child Lock is activated", "To operate your mower, please press GO + STOP together, then select the desired command.", true
+90, "rx_90", "Message", "Starting Point 1 Problem", true
+91, "rx_91", "Message", "Starting Point 2 Problem", true
+92, "rx_92", "No Base Station Found", "Press OK to deactivate theft protection alarm.", true
+93, "rx_93", "Subzone 3 Entry Problem", "", false
+94, "rx_94", "Subzone 4 Entry Problem", "", false
+95, "rx_95", "Rain Sensing…", "", false
+501, "rx_501", "Wire signal off reading is higher than wire signal on reading", "", true
+502, "rx_502", "Wire reading indicates calibration failed because either the signal off amplitude readings or the signal on amplitude readings exceed their tolerance", "", true
+503, "rx_503", "Wire reading indicates calibration failed because we detect that robot is not inside the garden during the calibration with signal on", "", true
+504, "rx_504", "Wire reading indicates calibration failed because we detect that in/out readings are invalid", "", true
+505, "rx_505", "Wire reading indicates calibration failed because the difference between wire max signal threshold and wire amplitude set point is too big", "", true
+506, "rx_506", "Wire reading indicates calibration failed because the wire no signal gain is too small", "", true
+507, "rx_507", "Drive Motor Disconnected", "", true
+508, "rx_508", "Drive configuration is invalid", "", true
+509, "rx_509", "Tilt calibration failed", "", true
+510, "rx_510", "Tilt calibration failed because accelerometer readings are not in tolerance", "", true
+511, "rx_511", "Accelerometer failure", "", true
+512, "rx_512", "Battery voltage calibration failure", "", true
+513, "rx_513", "Error 513", "", false
+514, "rx_514", "Error 514", "", false
+515, "rx_515", "Error 515", "", false
+516, "rx_516", "Error 516", "", false
+517, "rx_517", "Error 517", "", false
+518, "rx_518", "Error 518", "", false
+519, "rx_519", "Error 519", "", false
+520, "rx_520", "Error 520", "", false
+521, "rx_521", "Disabling Device Removed", "Insert the Disabling Device to operate the mower", true
+522, "rx_522", "Lift Calibration Required", "Press GO button on the mower to start lift sensor calibration process", false
+525, "rx_525", "Lift Calibration Required", "Press GO button on the mower to start lift sensor calibration process", false
+527, "rx_527", "Mowing Motor Disconnected", "Open mower's cover and check mowing motor's connection",true

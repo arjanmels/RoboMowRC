@@ -6,7 +6,7 @@
 	],
 	"settings": {
 		"terminal.integrated.env.windows": {
-			"PATH": "C:\\Users\\arjan\\.platformio\\penv\\Scripts;C:\\Users\\arjan\\.platformio\\penv;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\Program Files\\Docker\\Docker\\Resources\\bin;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Program Files (x86)\\Intel\\Intel(R) Management Engine Components\\iCLS\\;C:\\Program Files\\Intel\\Intel(R) Management Engine Components\\iCLS\\;C:\\ProgramData\\Oracle\\Java\\javapath22;C:\\Intel\\OpenCL\\sdk\\bin\\x64;C:\\Intel\\OpenCL\\sdk\\bin\\x86;C:\\Intel\\OpenCL\\sdk\\bin\\Pin;C:\\Intel\\OpenCL\\sdk\\bin\\GTPin;C:\\Program Files\\Python27\\;C:\\Program Files\\Python27\\Scripts;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\x64;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\x86;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\Pin;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\GTPin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\Calibre2\\;c:\\devtools\\android\\sdk\\platform-tools;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files\\Microsoft\\Web Platform Installer\\;C:\\Program Files (x86)\\X-Rite\\Devices\\Services;C:\\Program Files (x86)\\X-Rite\\Devices\\Lib;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn\\;C:\\Program Files (x86)\\Microsoft SQL Server\\100\\Tools\\Binn\\;C:\\Program Files (x86)\\Microsoft SQL Server\\100\\DTS\\Binn\\;C:\\Program Files (x86)\\Nordic Semiconductor\\nrf5x\\bin\\;C:\\Program Files (x86)\\GNU Tools ARM Embedded\\4.9 2015q3\\bin;C:\\Program Files\\GNU ARM Eclipse\\Build Tools\\2.8-201611221915\\bin;c:\\devtools\\MinGW\\bin;c:\\devtools\\MinGW\\git\\bin;c:\\devtools\\MinGW\\mingw32\\bin;c:\\devtools\\MinGW\\msys\\1.0\\bin;C:\\Program Files\\TortoiseHg\\;C:\\Program Files\\TortoiseGit\\bin;C:\\Program Files\\Java\\jdk1.8.0_121\\bin;C:\\Program Files (x86)\\Nordic Semiconductor\\nRFgo Studio;c:\\DevTools;C:\\Program Files\\Intel\\WiFi\\bin\\;C:\\Program Files\\Common Files\\Intel\\WirelessCommon\\;C:\\Program Files\\dotnet\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\TortoiseSVN\\bin;C:\\Program Files\\nodejs\\;C:\\Program Files\\Microsoft VS Code\\bin;C:\\Program Files\\NVIDIA Corporation\\NVIDIA NvDLISR;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files (x86)\\IVI Foundation\\VISA\\WinNT\\Bin\\;C:\\Program Files\\IVI Foundation\\VISA\\Win64\\Bin\\;C:\\Program Files (x86)\\IVI Foundation\\VISA\\WinNT\\Bin;C:\\Program Files\\Git\\cmd;C:\\Program Files (x86)\\PuTTY\\;C:\\Program Files\\PowerShell\\6\\;C:\\Users\\arjan\\.dnx\\bin;C:\\Users\\arjan\\AppData\\Local\\Google\\Cloud SDK\\google-cloud-sdk\\bin;C:\\Users\\arjan\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\Microsoft VS Code\\bin;c:\\devtools;C:\\Program Files\\Intel\\WiFi\\bin\\;C:\\Program Files\\Common Files\\Intel\\WirelessCommon\\;C:\\Program Files (x86)\\Nmap;C:\\Users\\arjan\\AppData\\Roaming\\npm;C:\\Users\\arjan\\AppData\\Local\\GitHubDesktop\\bin;%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\Program Files\\Docker\\Docker\\Resources\\bin;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Program Files (x86)\\Intel\\Intel(R) Management Engine Components\\iCLS\\;C:\\Program Files\\Intel\\Intel(R) Management Engine Components\\iCLS\\;C:\\ProgramData\\Oracle\\Java\\javapath22;C:\\Intel\\OpenCL\\sdk\\bin\\x64;C:\\Intel\\OpenCL\\sdk\\bin\\x86;C:\\Intel\\OpenCL\\sdk\\bin\\Pin;C:\\Intel\\OpenCL\\sdk\\bin\\GTPin;C:\\Program Files\\Python27\\;C:\\Program Files\\Python27\\Scripts;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\x64;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\x86;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\Pin;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\GTPin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\Calibre2\\;c:\\devtools\\android\\sdk\\platform-tools;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files\\Microsoft\\Web Platform Installer\\;C:\\Program Files (x86)\\X-Rite\\Devices\\Services;C:\\Program Files (x86)\\X-Rite\\Devices\\Lib;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn\\;C:\\Program Files (x86)\\Microsoft SQL Server\\100\\Tools\\Binn\\;C:\\Program Files (x86)\\Microsoft SQL Server\\100\\DTS\\Binn\\;C:\\Program Files (x86)\\Nordic Semiconductor\\nrf5x\\bin\\;C:\\Program Files (x86)\\GNU Tools ARM Embedded\\4.9 2015q3\\bin;C:\\Program Files\\GNU ARM Eclipse\\Build Tools\\2.8-201611221915\\bin;c:\\devtools\\MinGW\\bin;c:\\devtools\\MinGW\\git\\bin;c:\\devtools\\MinGW\\mingw32\\bin;c:\\devtools\\MinGW\\msys\\1.0\\bin;C:\\Program Files\\TortoiseHg\\;C:\\Program Files\\TortoiseGit\\bin;C:\\Program Files\\Java\\jdk1.8.0_121\\bin;C:\\Program Files (x86)\\Nordic Semiconductor\\nRFgo Studio;c:\\DevTools;C:\\Program Files\\Intel\\WiFi\\bin\\;C:\\Program Files\\Common Files\\Intel\\WirelessCommon\\;C:\\Program Files\\dotnet\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\TortoiseSVN\\bin;C:\\Program Files\\nodejs\\;C:\\Program Files\\Microsoft VS Code\\bin;C:\\Program Files\\NVIDIA Corporation\\NVIDIA NvDLISR;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files (x86)\\IVI Foundation\\VISA\\WinNT\\Bin\\;C:\\Program Files\\IVI Foundation\\VISA\\Win64\\Bin\\;C:\\Program Files (x86)\\IVI Foundation\\VISA\\WinNT\\Bin;C:\\Program Files\\Git\\cmd;C:\\Program Files (x86)\\PuTTY\\;C:\\Program Files\\PowerShell\\6\\;C:\\Users\\arjan\\.dnx\\bin;C:\\Users\\arjan\\AppData\\Local\\Google\\Cloud SDK\\google-cloud-sdk\\bin;C:\\Users\\arjan\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\Microsoft VS Code\\bin;c:\\devtools;C:\\Program Files\\Intel\\WiFi\\bin\\;C:\\Program Files\\Common Files\\Intel\\WirelessCommon\\;C:\\Program Files (x86)\\Nmap;C:\\Users\\arjan\\AppData\\Roaming\\npm;C:\\Users\\arjan\\AppData\\Local\\GitHubDesktop\\bin;%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;",
+			"PATH": "C:\\Users\\arjan\\.platformio\\penv\\Scripts;C:\\Users\\arjan\\.platformio\\penv;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\Program Files\\Docker\\Docker\\Resources\\bin;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Program Files (x86)\\Intel\\Intel(R) Management Engine Components\\iCLS\\;C:\\Program Files\\Intel\\Intel(R) Management Engine Components\\iCLS\\;C:\\ProgramData\\Oracle\\Java\\javapath22;C:\\Intel\\OpenCL\\sdk\\bin\\x64;C:\\Intel\\OpenCL\\sdk\\bin\\x86;C:\\Intel\\OpenCL\\sdk\\bin\\Pin;C:\\Intel\\OpenCL\\sdk\\bin\\GTPin;C:\\Program Files\\Python27\\;C:\\Program Files\\Python27\\Scripts;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\x64;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\x86;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\Pin;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\GTPin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\Calibre2\\;c:\\devtools\\android\\sdk\\platform-tools;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files\\Microsoft\\Web Platform Installer\\;C:\\Program Files (x86)\\X-Rite\\Devices\\Services;C:\\Program Files (x86)\\X-Rite\\Devices\\Lib;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn\\;C:\\Program Files (x86)\\Microsoft SQL Server\\100\\Tools\\Binn\\;C:\\Program Files (x86)\\Microsoft SQL Server\\100\\DTS\\Binn\\;C:\\Program Files (x86)\\Nordic Semiconductor\\nrf5x\\bin\\;C:\\Program Files (x86)\\GNU Tools ARM Embedded\\4.9 2015q3\\bin;C:\\Program Files\\GNU ARM Eclipse\\Build Tools\\2.8-201611221915\\bin;c:\\devtools\\MinGW\\bin;c:\\devtools\\MinGW\\git\\bin;c:\\devtools\\MinGW\\mingw32\\bin;c:\\devtools\\MinGW\\msys\\1.0\\bin;C:\\Program Files\\TortoiseHg\\;C:\\Program Files\\TortoiseGit\\bin;C:\\Program Files\\Java\\jdk1.8.0_121\\bin;C:\\Program Files (x86)\\Nordic Semiconductor\\nRFgo Studio;c:\\DevTools;C:\\Program Files\\Intel\\WiFi\\bin\\;C:\\Program Files\\Common Files\\Intel\\WirelessCommon\\;C:\\Program Files\\dotnet\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\TortoiseSVN\\bin;C:\\Program Files\\nodejs\\;C:\\Program Files\\Microsoft VS Code\\bin;C:\\Program Files\\NVIDIA Corporation\\NVIDIA NvDLISR;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files (x86)\\IVI Foundation\\VISA\\WinNT\\Bin\\;C:\\Program Files\\IVI Foundation\\VISA\\Win64\\Bin\\;C:\\Program Files (x86)\\IVI Foundation\\VISA\\WinNT\\Bin;C:\\Program Files\\Git\\cmd;C:\\Program Files (x86)\\PuTTY\\;C:\\Program Files\\PowerShell\\6\\;C:\\Users\\arjan\\.cargo\\bin;C:\\Users\\arjan\\.dnx\\bin;C:\\Users\\arjan\\AppData\\Local\\Google\\Cloud SDK\\google-cloud-sdk\\bin;C:\\Users\\arjan\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\Microsoft VS Code\\bin;c:\\devtools;C:\\Program Files\\Intel\\WiFi\\bin\\;C:\\Program Files\\Common Files\\Intel\\WirelessCommon\\;C:\\Program Files (x86)\\Nmap;C:\\Users\\arjan\\AppData\\Roaming\\npm;C:\\Users\\arjan\\AppData\\Local\\GitHubDesktop\\bin;C:\\Users\\arjan\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\CMake\\bin;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\Program Files\\Docker\\Docker\\Resources\\bin;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Program Files (x86)\\Intel\\Intel(R) Management Engine Components\\iCLS\\;C:\\Program Files\\Intel\\Intel(R) Management Engine Components\\iCLS\\;C:\\ProgramData\\Oracle\\Java\\javapath22;C:\\Intel\\OpenCL\\sdk\\bin\\x64;C:\\Intel\\OpenCL\\sdk\\bin\\x86;C:\\Intel\\OpenCL\\sdk\\bin\\Pin;C:\\Intel\\OpenCL\\sdk\\bin\\GTPin;C:\\Program Files\\Python27\\;C:\\Program Files\\Python27\\Scripts;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\x64;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\x86;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\Pin;C:\\Program Files (x86)\\Intel\\OpenCL SDK\\6.1\\bin\\GTPin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\Calibre2\\;c:\\devtools\\android\\sdk\\platform-tools;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files\\Microsoft\\Web Platform Installer\\;C:\\Program Files (x86)\\X-Rite\\Devices\\Services;C:\\Program Files (x86)\\X-Rite\\Devices\\Lib;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn\\;C:\\Program Files (x86)\\Microsoft SQL Server\\100\\Tools\\Binn\\;C:\\Program Files (x86)\\Microsoft SQL Server\\100\\DTS\\Binn\\;C:\\Program Files (x86)\\Nordic Semiconductor\\nrf5x\\bin\\;C:\\Program Files (x86)\\GNU Tools ARM Embedded\\4.9 2015q3\\bin;C:\\Program Files\\GNU ARM Eclipse\\Build Tools\\2.8-201611221915\\bin;c:\\devtools\\MinGW\\bin;c:\\devtools\\MinGW\\git\\bin;c:\\devtools\\MinGW\\mingw32\\bin;c:\\devtools\\MinGW\\msys\\1.0\\bin;C:\\Program Files\\TortoiseHg\\;C:\\Program Files\\TortoiseGit\\bin;C:\\Program Files\\Java\\jdk1.8.0_121\\bin;C:\\Program Files (x86)\\Nordic Semiconductor\\nRFgo Studio;c:\\DevTools;C:\\Program Files\\Intel\\WiFi\\bin\\;C:\\Program Files\\Common Files\\Intel\\WirelessCommon\\;C:\\Program Files\\dotnet\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\TortoiseSVN\\bin;C:\\Program Files\\nodejs\\;C:\\Program Files\\Microsoft VS Code\\bin;C:\\Program Files\\NVIDIA Corporation\\NVIDIA NvDLISR;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files (x86)\\IVI Foundation\\VISA\\WinNT\\Bin\\;C:\\Program Files\\IVI Foundation\\VISA\\Win64\\Bin\\;C:\\Program Files (x86)\\IVI Foundation\\VISA\\WinNT\\Bin;C:\\Program Files\\Git\\cmd;C:\\Program Files (x86)\\PuTTY\\;C:\\Program Files\\PowerShell\\6\\;C:\\Users\\arjan\\.cargo\\bin;C:\\Users\\arjan\\.dnx\\bin;C:\\Users\\arjan\\AppData\\Local\\Google\\Cloud SDK\\google-cloud-sdk\\bin;C:\\Users\\arjan\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\Microsoft VS Code\\bin;c:\\devtools;C:\\Program Files\\Intel\\WiFi\\bin\\;C:\\Program Files\\Common Files\\Intel\\WirelessCommon\\;C:\\Program Files (x86)\\Nmap;C:\\Users\\arjan\\AppData\\Roaming\\npm;C:\\Users\\arjan\\AppData\\Local\\GitHubDesktop\\bin;C:\\Users\\arjan\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\CMake\\bin",
 			"PLATFORMIO_CALLER": "vscode"
 		},
 		"files.associations": {
@@ -23,7 +23,84 @@
 			"deque": "cpp",
 			"unordered_map": "cpp",
 			"vector": "cpp",
-			"initializer_list": "cpp"
-		}
+			"initializer_list": "cpp",
+			"*.tcc": "cpp",
+			"bitset": "cpp",
+			"cctype": "cpp",
+			"clocale": "cpp",
+			"cmath": "cpp",
+			"cstdint": "cpp",
+			"cstdio": "cpp",
+			"cstdlib": "cpp",
+			"cstring": "cpp",
+			"ctime": "cpp",
+			"cwchar": "cpp",
+			"cwctype": "cpp",
+			"list": "cpp",
+			"unordered_set": "cpp",
+			"exception": "cpp",
+			"fstream": "cpp",
+			"iomanip": "cpp",
+			"iosfwd": "cpp",
+			"iostream": "cpp",
+			"limits": "cpp",
+			"memory": "cpp",
+			"new": "cpp",
+			"ostream": "cpp",
+			"numeric": "cpp",
+			"sstream": "cpp",
+			"stdexcept": "cpp",
+			"streambuf": "cpp",
+			"tuple": "cpp",
+			"typeinfo": "cpp",
+			"utility": "cpp",
+			"cstddef": "cpp"
+		},
+		"search.exclude": {
+			"**/.piolibdeps": true
+		},
+		"psi-header.config": {
+			"author": "Arjan Mels",
+			"authorEmail": "github@mels.email",
+			"initials": "AM",
+			"copyrightHolder": "Arjan Mels",
+			"license": "Custom",
+			"blankLinesAfter": 1,
+			"forceToTop": true
+		},
+		"psi-header.license-text": ["Copyright © <<year>> Arjan Mels, The Netherlands"],
+		"psi-header.templates": [
+			{
+				"language": "*",
+				"template": [
+					"RoboMow RC - ESP32 Application to monitor and control RoboMow lawn mowers",
+					"",
+					"Copyright (c) <<year>> <<author>>",
+					"",
+					"This program is free software: you can redistribute it and/or modify",
+					"it under the terms of the GNU General Public License as published by",
+					"the Free Software Foundation, either version 3 of the License, or",
+					"(at your option) any later version.",
+					"",
+					"This program is distributed in the hope that it will be useful,",
+					"but WITHOUT ANY WARRANTY; without even the implied warranty of",
+					"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
+					"GNU General Public License for more details.",
+					"",
+					"You should have received a copy of the GNU General Public License",
+					"along with this program.  If not, see <https://www.gnu.org/licenses/>.",
+					"",
+					"Created : <<filecreated('dddd MMMM Do YYYY hh:mm:ss')>> by <<author>> <<<authoremail>>>",
+					"Modified: <<filecreated('dddd MMMM Do YYYY hh:mm:ss')>> by <<author>> <<<authoremail>>>",
+					"",
+					"Revisions:",
+				],
+				"changeLogCaption": "Revisions:",
+				"changeLogHeaderLineCount": 0,
+				"changeLogEntryTemplate": [
+					"<<dateformat(DD-MM-YY)>>\t<<initials>>\t"
+				]
+			},
+		],
 	}
 }

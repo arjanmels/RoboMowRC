@@ -1,37 +1,51 @@
 /*
- * FaMe IT ECG Filter for Cardiac Booster
+ * RoboMow RC - ESP32 Application to monitor and control RoboMow lawn mowers
  * 
- * Copyright (c) 2019 FaMe IT
+ * Copyright (c) 2019 Arjan Mels
  * 
- * Created : Saturday May 11th 2019 01:36:18 by Arjan Mels <admin@fame-it.net>
- * Modified: Saturday May 11th 2019 01:36:18 by Arjan Mels <admin@fame-it.net>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * 
+ * Created : Thursday June 20th 2019 08:17:42 by Arjan Mels <github@mels.email>
+ * Modified: Thursday June 20th 2019 08:17:42 by Arjan Mels <github@mels.email>
  * 
  * Revisions:
- * 28-05-2019	AM	Initial Version
  */
 
 #include <Arduino.h>
-#include <ArduinoOTA.h>
 
 #include <WiFi.h>
 
 #include "robomowwebserver.h"
 
 #include <PageBuilder.h>
-#include <ESPmDNS.h>
-#include <SPIFFS.h>
+//#include <ESPmDNS.h>
 #include <time.h>
 #include <HTTPClient.h>
+#include <TinyGPS++.h>
+#include <esp_task_wdt.h>
 
 //#include "config.h"
 
-#include "buffer.h"
 #include "images.h"
-//#include "OTA.h"
-#include "touchkey.h"
-#include "display.h"
+//#include "display.h"
 #include "startupinfo.h"
 #include "mqtt.h"
+#include "lora.h"
+#include "ble.h"
+#include "config.h"
+#include "general.h"
+//#include "websocket.h"
 /*
 void mqttConnect(String const &server, int port, bool tls, String const &clientid, String const &user, String const &passwd) {}
 void mqttSetup() {}
@@ -40,9 +54,10 @@ void mqttPublishLocation() {}
 */
 
 // Define Hardware components
-TouchKey keyDown(12);
-TouchKey keyUp(13);
-bool flagUpdateSettings = false;
+TinyGPSPlus gps;
+NVS nvs;
+
+static bool flagUpdateLocation = false;
 
 /**
  * @brief Clean up previous WiFi Connection
@@ -70,58 +85,118 @@ void taskIpgeolocationHandler(void *parameter)
   while (true)
   {
     vTaskSuspend(NULL);
-    String apiKey = Portal.getSetting("ipgeolocation_apikey");
-    if (apiKey.length() > 0)
+
+    String apiKey = Portal.getSetting(CFG_GEOAPIKEY);
+    if (!WiFi.isConnected())
     {
-      Serial.println("Trying to get location and timezone from ipgeolocation.io");
-      HTTPClient http;
-      http.begin("https://api.ipgeolocation.io/timezone?apiKey=" + apiKey);
-      int httpCode = http.GET();
-      // httpCode will be negative on error
-      if (httpCode > 0)
-      {
-        if (httpCode == HTTP_CODE_OK)
-        {
-          String payload = http.getString();
-          DynamicJsonDocument doc(1000);
-          deserializeJson(doc, payload);
-          info.gmtOffset = doc["timezone_offset"].as<int>() * 3600;
-          info.daylightOffset = doc["dst_savings"].as<int>() * 3600;
-
-          info.city = doc["geo"]["city"].as<String>();
-          info.country = doc["geo"]["country_name"].as<String>();
-          info.latitude = doc["geo"]["latitude"].as<String>();
-          info.longitude = doc["geo"]["longitude"].as<String>();
-          info.timezone = doc["timezone"].as<String>();
-
-          Serial.printf("Location: %s, %s, Lat: %s, Lon: %s, Timezone: %s\n", info.city.c_str(), info.country.c_str(), info.latitude.c_str(), info.longitude.c_str(), info.timezone.c_str());
-        }
-        else
-        {
-          // HTTP header has been send and Server response header has been handled
-          Serial.printf("Failed to get timezone from server (%d).\n", httpCode);
-        }
-      }
-      else
-      {
-        Serial.printf("Failed to get timezone from server (%s).\n", http.errorToString(httpCode).c_str());
-      }
-
-      http.end();
-      flagUpdateSettings = true;
+      Serial.printf("Failed to get timezone: wifi not connected\n");
+    }
+    if (apiKey.length() == 0)
+    {
+      Serial.println("No API key for ipgeolocation.io");
     }
     else
     {
-      Serial.println("No API key for ipgeolocation.io");
+      Serial.println("Trying to get location and timezone from ipgeolocation.io");
+
+      String url = "https://api.ipgeolocation.io/timezone?apiKey=" + apiKey;
+      if (gps.location.age() <= GPS_MAX_AGE_FOR_TIMEZONE)
+        url += String() + "&lat=" + String(info.latitude, 5) + "&long=" + String(info.longitude, 5);
+
+      HTTPClient http;
+      http.begin(url);
+      int httpCode = http.GET();
+      // httpCode will be negative on error
+      if (httpCode == HTTP_CODE_OK)
+      {
+        String payload = http.getString();
+        DynamicJsonDocument doc(500);
+        deserializeJson(doc, payload);
+        info.gmtOffset = doc["timezone_offset"].as<int>() * 3600;
+        info.daylightOffset = doc["dst_savings"].as<int>() * 3600;
+
+        info.timezone = Portal.getSetting(CFG_TIMEZONE);
+        if (info.timezone == "Auto")
+          info.timezone = doc["timezone"].as<String>();
+
+        if (gps.location.age() > GPS_MAX_AGE_FOR_TIMEZONE)
+        {
+          info.source = "ip";
+          info.latitude = doc["geo"]["latitude"].as<float>();
+          info.longitude = doc["geo"]["longitude"].as<float>();
+          info.altitude = 0;
+          info.satellites = 0;
+        }
+
+        Serial.printf("Got location from ipgeolocation.io: %.5f, %.5f, Timezone: %s\n", info.latitude, info.longitude, info.timezone.c_str());
+
+        http.end();
+        flagUpdateLocation = true;
+        continue; // skip error handling
+      }
+      else
+      {
+        Serial.printf("Failed to get timezone from server (%d: %s).\n", httpCode, http.errorToString(httpCode).c_str());
+      }
+    }
+
+    // could not get form ipgeolocation
+    if (gps.location.age() > GPS_MAX_AGE_FOR_TIMEZONE)
+    {
+      info.source = "none";
+      info.satellites = 0;
+    }
+    info.timezone = Portal.getSetting(CFG_TIMEZONE);
+  }
+}
+
+void GPSHandle()
+{
+  while (Serial1.available())
+    gps.encode(Serial1.read());
+
+  static float prevLat;
+  static float prevLng;
+  static float prevAlt;
+  static uint32_t prevSats;
+
+  if (gps.location.isUpdated())
+  {
+    if (gps.distanceBetween(gps.location.lat(), gps.location.lng(), prevLat, prevLng) > 10.0 || fabs(gps.altitude.meters() - prevAlt) > 2.5 || gps.satellites.value() != prevSats)
+    {
+      prevLat = gps.location.lat();
+      prevLng = gps.location.lng();
+      prevAlt = gps.altitude.meters();
+      prevSats = gps.satellites.value();
+      log_d("%.5f, %.5f, %.2f, satellites: %d", prevLat, prevLng, prevAlt, prevSats);
+      info.source = "gps";
+      info.latitude = prevLat;
+      info.longitude = prevLng;
+      info.altitude = prevAlt;
+      info.satellites = prevSats;
+      mqttPublishLocation();
     }
   }
 }
 
 void getLocationFromIP()
 {
-  String timeZone = Portal.getSetting("timezone");
-  if (timeZone == "Auto")
+  static unsigned long prevGet;
+  static unsigned long prevCount = 3;
+  if (millis() - prevGet > 5 * 60 * 1000)
+  {
+    prevCount += (millis() - prevGet) / (5 * 60 * 1000);
+    if (prevCount > 3)
+      prevCount = 3;
+    prevGet = millis();
+  }
+
+  if (prevCount > 0)
+  {
+    prevCount--;
     vTaskResume(taskIpgeolocation);
+  }
+  Serial.println(String("PrevCount: ") + prevCount);
 }
 
 void updateSettings()
@@ -131,7 +206,7 @@ void updateSettings()
   static String prevTimeZone;
   static int prevGmtOffset;
   static int prevDaylightOffset;
-  String timeZone = Portal.getSetting("timezone");
+  String timeZone = Portal.getSetting(CFG_TIMEZONE);
   if (prevTimeZone != timeZone || info.gmtOffset != prevGmtOffset || info.daylightOffset != prevDaylightOffset)
   {
     prevTimeZone = timeZone;
@@ -142,6 +217,7 @@ void updateSettings()
 
       info.gmtOffset = timeZone.toFloat() * 3600;
       info.daylightOffset = 0;
+      info.timezone = timeZone;
     }
 
     Serial.println(String("Configuring time with offset: ") + info.gmtOffset + " and DST Offset: " + info.daylightOffset);
@@ -149,40 +225,13 @@ void updateSettings()
   }
 
   static String prevApiKey;
-  String apiKey = Portal.getSetting("ipgeolocation_apikey");
+  String apiKey = Portal.getSetting(CFG_GEOAPIKEY);
   if (apiKey != prevApiKey)
   {
     prevApiKey = apiKey;
     getLocationFromIP();
   }
-
-  static int prevPort;
-  static String prevServer;
-  static bool prevTls;
-  static String prevClientid;
-  static String prevUser;
-  static String prevPasswd;
-
-  int port = Portal.getSetting("mqttport").toInt();
-  String server = Portal.getSetting("mqttserver");
-  bool tls = Portal.getSetting("mqtttls").toInt();
-  String clientid = Portal.getSetting("mqttclientid");
-  String user = Portal.getSetting("mqttuser");
-  String passwd = Portal.getSetting("mqttpasswd");
-
-  Serial.println(String("diff: ") + port + "==" + prevPort + ", " + server + "==" + prevServer + ", " + tls + "==" + prevTls + ", " + clientid + "==" + prevClientid + ", " + user + "==" + prevUser + ", " + passwd + "==" + prevPasswd + ", ");
-  if (!Mqtt.connected() || port != prevPort || server != prevServer || tls != prevTls || clientid != prevClientid || user != prevUser || passwd != prevPasswd)
-  {
-    prevPort = port;
-    prevServer = server;
-    prevTls = tls;
-    prevClientid = clientid;
-    prevUser = user;
-    prevPasswd = passwd;
-
-    if (server.length() > 0 && port > 0)
-      mqttConnect(server, port, tls, clientid, user, passwd);
-  }
+  mqttReconnect();
 }
 
 static String settingsChanged(AutoConnectAux &aux, PageArgument &args)
@@ -191,7 +240,7 @@ static String settingsChanged(AutoConnectAux &aux, PageArgument &args)
   {
     Portal.saveParams(aux, args);
     // handle update in main loop: limits stack depth
-    flagUpdateSettings = true;
+    flagUpdateLocation = true;
   }
   return String();
 }
@@ -207,7 +256,7 @@ void WiFiEvent(WiFiEvent_t event)
     break;
   case SYSTEM_EVENT_STA_CONNECTED:
     break;
-  case SYSTEM_EVENT_AP_STA_GOT_IP6:
+  case SYSTEM_EVENT_GOT_IP6:
     break;
   case SYSTEM_EVENT_STA_GOT_IP:
     break;
@@ -218,14 +267,46 @@ void WiFiEvent(WiFiEvent_t event)
   }
 }
 
+#ifdef CUSTOM_STACK_SIZE
+extern TaskHandle_t loopTaskHandle;
+extern bool loopTaskWDTEnabled;
+
+void setup2();
+static void loopTask(void *pvParameters)
+{
+  setup2();
+  for (;;)
+  {
+    if (loopTaskWDTEnabled)
+    {
+      esp_task_wdt_reset();
+    }
+    loop();
+  }
+}
+#endif
+
 /**
  * @brief Arduino setup routine, containing one time initialization
  * 
  */
 void setup()
 {
+#ifdef CUSTOM_STACK_SIZE
+  // Recreate loop task with bigger stack
+  TaskHandle_t loopTaskHandle = NULL;
+  xTaskCreateUniversal(loopTask, "loopTask", CUSTOM_STACK_SIZE, NULL, 1, &loopTaskHandle, CONFIG_ARDUINO_RUNNING_CORE);
+  vTaskDelete(NULL);
+  Serial.println("Should not be reached...");
+#else
+  setup2();
+#endif
+}
+
+void setup2()
+{
   // Create RTOS items
-  xTaskCreate(taskIpgeolocationHandler, "ipgeolocation", 10000, NULL, 1, &taskIpgeolocation);
+  xTaskCreate(taskIpgeolocationHandler, "ipgeolocation", 4096, NULL, 1, &taskIpgeolocation);
 
   // Initialize Serial Speed
   Serial.begin(115200);
@@ -233,40 +314,68 @@ void setup()
   // Show initializing message (this takes a while due to MD5sum calculation etc.)
   printStartupInfo();
 
-  // Show startup display
+  Serial.println("Start NVS...");
+  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
+  nvs.init("settings");
+
+  /*  Serial.println("Start Display...");
+  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
   displayInit();
   displayStart();
+*/
 
-  Serial.println("Init SPIFFS...");
-  SPIFFS.begin(true);
-
+  Serial.println("Start MQTT...");
+  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
   mqttSetup();
 
   Serial.println("Reset WIFI...");
+  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
   resetWiFi();
+  WiFi.onEvent(WiFiEvent);
 
-  // Start OTA
-  //  startOTA(display, &startOTA);
+  Serial.println("Start Websocket...");
+  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
+  //  websocketSetup();
 
   Serial.println("Start Webserver...");
+  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
 
+  Portal.on("/settings", settingsChanged);
   if (Portal.begin())
   {
     Serial.println("WiFi connected: " + WiFi.localIP().toString());
-    Serial.println("Start MDNS...");
+    /*    Serial.println("Start MDNS...");
+    log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
     if (MDNS.begin("RoboMowRC"))
       MDNS.addService("http", "tcp", 80);
+      */
   }
-  Portal.on("/settings", settingsChanged);
-  WiFi.onEvent(WiFiEvent);
+
+  Serial.println("Start GPS receiver...");
+  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
+  //GPS Receiver settings
+  Serial1.begin(9600, SERIAL_8N1, 12, 15);
+
+  /*
+  Serial.println("Start Display...");
+  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
+  displayStart();
+*/
+
+  Serial.println("Start BLE...");
+  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
+  setupBLE();
+
+  Serial.println("Start LoRA...");
+  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
+  setupLora();
 
   Serial.println("Update Settings...");
+  log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
   updateSettings();
 
   Serial.println("Starting Main Loop...");
-  displayStart();
-
-  getLocationFromIP();
+  Serial.println(String("Free heap: ") + ESP.getFreeHeap() / 1024 + " kByte");
 }
 
 /**
@@ -277,27 +386,17 @@ void loop()
 {
 
   //ArduinoOTA.handle();
-
-  /* 
-  if (millis() - lastpub > MQTT_UPDATE_INTERVAL) {
-    if (!Mqtt.connected()) {
-      mqttConnect();
-    }
-  }
-*/
-  if (WiFi.isConnected())
-  {
-    if (!Mqtt.connected())
-      Mqtt.connect();
-  }
-
+  mqttHandle();
   Portal.handleClient();
+  GPSHandle();
+  loopBLE();
+  //  websocketHandle();
 
   static unsigned long prevSec = 0;
-  if (millis() > prevSec + 1000)
+  if (millis() - prevSec > 1000)
   {
     prevSec = millis();
-    displayStart();
+    //    displayStart();
 
     // get the timezoneooffset at the start of every hour to allow for DST changes
     static int prevHour = 0;
@@ -305,26 +404,24 @@ void loop()
     if (getLocalTime(&timeinfo, 10) && timeinfo.tm_hour != prevHour)
     {
       prevHour = timeinfo.tm_hour;
-      if (WiFi.isConnected())
-        getLocationFromIP();
+      getLocationFromIP();
     }
   }
 
-  if (flagUpdateSettings)
+  sendLocationLora(1, info.latitude, info.longitude, info.altitude, gps.location.age());
+
+  if (flagUpdateLocation)
   {
     updateSettings();
-    if (WiFi.isConnected())
-      mqttPublishLocation();
-    flagUpdateSettings = false;
+    mqttPublishLocation();
+    flagUpdateLocation = false;
   }
 
-  if (WiFi.isConnected())
+  // update Mqtt state at least every minute
+  static unsigned long prevMqtt = 0;
+  if (millis() - prevMqtt > 10000)
   {
-    static unsigned long prevMqtt = 0;
-    if (millis() > prevMqtt + 60000)
-    {
-      prevMqtt = millis();
-      mqttPublishStats();
-    }
+    prevMqtt = millis();
+    mqttPublishStats();
   }
 }
