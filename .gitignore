@@ -12,3 +12,4 @@
 !.pioenvs/lolin32-wifi/
 .pioenvs/lolin32-wifi/*
 !.pioenvs/lolin32-wifi/firmware.bin
+PersonalSettings.txt

@@ -127,8 +127,10 @@ void onMqttConnect(bool sessionPresent)
     mqttPublishProperty("robomow/automaticedge", "Automatic Operation Edge", "boolean", "", "", true);
     mqttPublishProperty("robomow/automaticscan", "Automatic Operation Scan", "boolean", "", "", true);
 
-    mqttPublishProperty("robomow/nextdepart", "Next Departure");
-    mqttPublishProperty("robomow/automaticoperationsince", "Automatic Operation Since");
+    mqttPublishProperty("robomow/minutestillnextdepart", "Minutes till Next Departure");
+    mqttPublishProperty("robomow/minutesautomaticoperation", "Minutes Automatic Operation");
+
+    mqttPublishProperty("robomow/scheduleenabled", "Automatic Schedule Enabled", "boolean", "", "", true);
 
     mqttPublishProperty("robomow/childprotection", "Child Protection Enabled", "boolean", "", "", true);
 
@@ -140,9 +142,12 @@ void onMqttConnect(bool sessionPresent)
 
     mqttPublish("stats/mac", WiFi.macAddress());
     mqttPublish("stats/fwversion", info.firmwareMD5);
-    mqttPublish("stats/starttime", getGMT());
+    mqttPublish("stats/starttime", getGMT()); // TODO: clock may not yet be prooperly set!!!!
     mqttPublish("stats/blestrength", "0");
     mqttPublish("stats/bleconnected", "false");
+
+    mqttPublish("robomow/scheduleenabled", "false");
+    mqttPublish("robomow/childprotection", "false");
 
     mqttPublishStats();
 

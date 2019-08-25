@@ -262,6 +262,9 @@ uint8_t nopData[] = {0xAA, 0x05, 0x1F, 0x1B, 0x16};
 
 void BLEHandle()
 {
+    if (Portal.getSetting(CFG_MBSERIAL).length() == 0)
+        return;
+
     // If the flag "doConnect" is true then we have scanned for and found the desired
     // BLE Server with which we wish to connect.  Now we connect to it.  Once we are
     // connected we set the connected flag to be true.

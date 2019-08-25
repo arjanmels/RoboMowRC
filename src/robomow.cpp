@@ -32,7 +32,7 @@
 
 void RoboMow::updateType()
 {
-    mqttPublish("robomowversion/type", mFamily == RS ? "RS" : mFamily == RC ? "RC" : mFamily == RX ? "RX" : "Unknown");
+    mqttPublish("robomowversion/family", mFamily == RS ? "RS" : mFamily == RC ? "RC" : mFamily == RX ? "RX" : "Unknown");
     mqttPublish("robomowversion/swversion", String(mSoftwareVersion));
     mqttPublish("robomowversion/swrevision", String(mSoftwareRelease));
     mqttPublish("robomowversion/hwversion", String(mMainboardVersion));
@@ -51,23 +51,31 @@ void RoboMow::updateMessage()
     mqttPublish("robomow/statusdescription", mMsgDescription);
 }
 
+void RoboMow::updateScheduleState()
+{
+    mqttPublish("robomow/scheduleenabled", mScheduleOn ? "true" : "false");
+}
+
+void RoboMow::updateChildLockState()
+{
+    mqttPublish("robomow/childprotection", mChildLockEnabled ? "true" : "false");
+}
+
 void RoboMow::updateState()
 {
     mqttPublish("robomow/mode", mSystemMode == Idle ? "Idle" : mSystemMode == Charging ? "Charging" : mSystemMode == Automatic ? "Automatic Operation" : mSystemMode == RemoteControlled ? "RemoteControlled" : mSystemMode == Bit ? "Bit" : "Unknown");
-    mqttPublish("robomow/status", mMsgText);
-    mqttPublish("robomow/statusdescription", mMsgDescription);
     mqttPublish("robomow/battery", String(mBatteryCapacity));
-    mqttPublish("robomow/theftprotection", String(mAntiTheftEnabled));
-    mqttPublish("robomow/theftprotectionactive", String(mAntiTheftActive));
-    mqttPublish("robomow/theftprotectiontempdisable", String(mAntiTheftTempDisable));
+    mqttPublish("robomow/theftprotection", mAntiTheftEnabled ? "true" : "false");
+    mqttPublish("robomow/theftprotectionactive", mAntiTheftActive ? "true" : "false");
+    mqttPublish("robomow/theftprotectiontempdisable", mAntiTheftTempDisable ? "true" : "false");
 
-    mqttPublish("robomow/mowmotoractive", String(mMowMotorActive));
-    mqttPublish("robomow/searchdockstation", String(mSearchDockStation));
-    mqttPublish("robomow/automaticedge", String(mAutomaticOperationEdge));
-    mqttPublish("robomow/automaticscan", String(mAutomaticOperationScan));
+    mqttPublish("robomow/mowmotoractive", mMowMotorActive ? "true" : "false");
+    mqttPublish("robomow/searchdockstation", mSearchDockStation ? "true" : "false");
+    mqttPublish("robomow/automaticedge", mAutomaticOperationEdge ? "true" : "false");
+    mqttPublish("robomow/automaticscan", mAutomaticOperationScan ? "true" : "false");
 
-    mqttPublish("robomow/nextdepart", getGMT(mMinutesTillNextDepart * 60));
-    mqttPublish("robomow/automaticoperationsince", getGMT(-60 * mMinutesAutomaticOperation));
+    mqttPublish("robomow/minutestillnextdepart", String(mMinutesTillNextDepart));
+    mqttPublish("robomow/minutesautomaticoperation", String(mMinutesAutomaticOperation));
 
     //    mqttPublish("robomow/childprotection", String(mBatteryCapacity));
 }

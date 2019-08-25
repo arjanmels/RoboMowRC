@@ -45,7 +45,7 @@
 #include "ble.h"
 #include "config.h"
 #include "general.h"
-//#include "websocket.h"
+#include "websocket.h"
 /*
 void mqttConnect(String const &server, int port, bool tls, String const &clientid, String const &user, String const &passwd) {}
 void mqttSetup() {}
@@ -342,10 +342,8 @@ void setup2()
     log_i("Start MQTT Client... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
     mqttSetup();
 
-    /*
     log_i("Start Websocket Server... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
     websocketSetup();
-    */
   }
   log_i("Start BLE... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
   setupBLE();
@@ -376,7 +374,7 @@ void loop()
   mqttHandle();
   GPSHandle();
   BLEHandle();
-  //  websocketHandle();
+  websocketHandle();
 
   static unsigned long prevSec = 0;
   if (millis() - prevSec > 1000)
@@ -394,6 +392,7 @@ void loop()
     }
   }
 
+  // TODO: wait with location sending untill initial time update
   sendLocationLora(1, info.latitude, info.longitude, info.altitude, gps.location.age());
 
   if (flagUpdateLocation)

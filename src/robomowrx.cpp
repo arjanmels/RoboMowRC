@@ -35,39 +35,73 @@ const RoboMowBase::MessageText &RoboMowRX::getMessageText(uint16_t id)
         return unknownMessageText;
 }
 
-void RoboMowRX::handleMessage(uint8_t *adata, size_t length)
+void RoboMowRX::handleMessage(Message const &msg)
 {
-    MSGTYPE msgId = (MSGTYPE)adata[0];
-    adata++;
-    length--;
-
-    Data data(adata);
-
-    log_i("Handling Msg; Id: %d, Length: %d, ", msgId, length);
-    hexDump(adata, length);
-
-    switch (msgId)
+    switch (msg.getId())
     {
+    case MSGTYPE::READEEPROM:
+    {
+        if (!msg.checkMinimumLength(2))
+            return;
+        uint16_t paramId = msg.int16(0);
+        switch (paramId)
+        {
+        case EEPROMPARAM::PROGRAMENABLED:
+        {
+            if (!msg.checkLength(6))
+                return;
+            if ((msg.int32(2) != 0) != main.mScheduleOn)
+            {
+                main.mScheduleOn = msg.int32(2) != 0;
+                main.updateScheduleState();
+            }
+            log_i("RoboMow:PROGRAMENABLED enabled %d", main.mScheduleOn);
+
+            return;
+        }
+        case EEPROMPARAM::CHILDLOCK:
+        {
+            if (!msg.checkLength(6))
+                return;
+            if ((msg.int32(2) != 0) != main.mChildLockEnabled)
+            {
+                main.mChildLockEnabled = msg.int32(2) != 0;
+                main.updateChildLockState();
+            }
+            log_i("RoboMow:CHILDLOCK enabled %d", main.mChildLockEnabled);
+            return;
+        }
+        default:
+        {
+#if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_ERROR
+            log_e("Unknown EEPROM param: %d, for MsgId: %d, Length: %d", paramId, msg.getId(), msg.getLength());
+            hexDump(msg.getData(), msg.getLength());
+#endif
+            return;
+        }
+        }
+    }
     case MSGTYPE::MISCELLANEOUS:
     {
-        if (length < 4)
-        {
-            log_e("Message too short for MsgId: %d, Length: %d, Required: 5", msgId, length);
-            break;
-        }
+        if (!msg.checkMinimumLength(4))
+            return;
 
-        //uint16_t packetId = data.int16(0);
-        uint16_t miscMsgId = data.int16(2);
+        //uint16_t packetId = msg.int16(0);
+        uint16_t miscMsgId = msg.int16(2);
         switch (miscMsgId)
         {
-        case MSGTYPEMISC::MISC_ROBOTSTATE:
+        case MISC_CLEARUSERMESSAGE:
         {
-            if (length < 10)
-            {
-                log_e("Message too short for MsgId: %d, MiscMsgId, Length: %d, Required: 5", msgId, miscMsgId, length);
-                break;
-            }
-            uint8_t flags1 = data.int8(4);
+            if (!msg.checkLength(5))
+                return;
+            log_i("RoboMow:MISC_CLEARUSERMESSAGE");
+        }
+        case MISC_ROBOTSTATE:
+        {
+            if (!msg.checkMinimumLength(11))
+                return;
+
+            uint8_t flags1 = msg.int8(4);
             main.mAutomaticOperationEdge = (flags1 & 0x02) != 0;
             main.mAutomaticOperationScan = (flags1 & 0x04) != 0;
             main.mSearchDockStation = (flags1 & 0x08) != 0;
@@ -75,37 +109,42 @@ void RoboMowRX::handleMessage(uint8_t *adata, size_t length)
             main.mProgramEnabled = (flags1 & 0x20) != 0;
             main.mAntiTheftEnabled = (flags1 & 0x40) != 0;
 
-            uint8_t flags2 = data.int8(5);
+            uint8_t flags2 = msg.int8(5);
             main.mSystemMode = (RoboMow::SystemMode)(flags2 & 0x07);
             main.mAntiTheftActive = (flags2 & 0x80) != 0;
 
-            uint8_t flags3 = data.int8(6);
+            uint8_t flags3 = msg.int8(6);
             main.mBatteryCapacity = flags3 & 0x7f;
             main.mAntiTheftTempDisable = (flags3 & 0x80) != 0;
 
-            main.mMinutesTillNextDepart = data.int16(7);
-            main.mMinutesAutomaticOperation = data.int16(9);
+            main.mMinutesTillNextDepart = msg.int16(7);
+            main.mMinutesAutomaticOperation = msg.int16(9);
 
             log_i("RoboMow:MISC_ROBOTSTATE SystemMode %u; Battery %u; MowMotorActive %u, SearchDockStation %u, AutomaticOperationEdge %u, AutomaticOperationScan %u, "
-                  "AntiTheftEnabled %u, AntiTheftActive %u, AntiTheftTempDisable %u, MinutesTillNextDepart %u, MinutesAutomaticOperation %u\n",
+                  "AntiTheftEnabled %u, AntiTheftActive %u, AntiTheftTempDisable %u, MinutesTillNextDepart %u, MinutesAutomaticOperation %u",
                   main.mSystemMode, main.mBatteryCapacity, main.mMowMotorActive, main.mSearchDockStation, main.mAutomaticOperationEdge, main.mAutomaticOperationScan,
                   main.mAntiTheftEnabled, main.mAntiTheftActive, main.mAntiTheftTempDisable, main.mMinutesTillNextDepart, main.mMinutesAutomaticOperation);
             main.updateState();
-            break;
+            return;
         }
         default:
-            RoboMowBase::handleMessage(adata, length);
-            break;
+        {
+#if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_ERROR
+            log_e("Unknown MISC param: %d, for MsgId: %d, Length: %d", miscMsgId, msg.getId(), msg.getLength());
+            hexDump(msg.getData(), msg.getLength());
+#endif
+            return;
         }
-        break;
+        }
     }
     default:
     {
-        RoboMowBase::handleMessage(adata, length);
-        break;
+        RoboMowBase::handleMessage(msg);
+        return;
     }
     }
 }
+
 std::map<uint16_t, RoboMowRX::MessageText> RoboMowRX::messages = {
     {1, MessageText{"Passed", "Operation Passed.", true}},
     {2, MessageText{"Operation Failed.", "The Test or Calibration performed has Failed.", true}},

@@ -41,6 +41,7 @@ class RoboMow
 public:
     enum Family : uint8_t
     {
+        Unknown = 0,
         RS = 1,
         RC = 2,
         RX = 3,
@@ -86,6 +87,14 @@ public:
     uint16_t mMinutesAutomaticOperation;
 
     void updateState();
+
+    bool mScheduleOn;
+
+    void updateScheduleState();
+
+    bool mChildLockEnabled;
+
+    void updateChildLockState();
 
 private:
     Family mFamily;

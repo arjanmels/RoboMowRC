@@ -25,18 +25,25 @@
 #include <Arduino.h>
 #include "robomowble.h"
 
+//TODO: check for messages in quick succesion
+// TODO: Check Message too short messages
 size_t RoboMowBLE::parseMessage(uint8_t *data, size_t max_length)
 {
+    if (max_length < 2)
+        return 0; // message not yet complete wait for more bluetooth packets
+
     if (data[0] != 0xAA)
     {
-        log_e("Message must start with 0xAA, found %02X instead.", pb[pbstartidx]);
-        hexDump(data, max_length);
+        log_e("Message must start with 0xAA, found %02X instead.", data[0]);
         return -1;
     }
     size_t msgLength = data[1];
     size_t dataidx = 2;
     if (msgLength == 0x01)
     {
+        if (max_length < 4)
+            return 0; // message not yet complete wait for more bluetooth packets
+
         msgLength = data[3] << 8 | data[2];
         dataidx += 2;
     }
@@ -46,7 +53,8 @@ size_t RoboMowBLE::parseMessage(uint8_t *data, size_t max_length)
 
     if (msgLength <= 4)
     {
-        log_e("Message too short (%d).", msgLength);
+        log_e("Message too short (message: %d, packet: %d).", msgLength, max_length);
+        hexDump(data, max_length);
         return -1;
     }
 
@@ -67,13 +75,19 @@ size_t RoboMowBLE::parseMessage(uint8_t *data, size_t max_length)
         return -1;
     }
 
-    msgHandler->handleMessage(data + dataidx, msgLength - dataidx - 1);
+    msgHandler->handleMessage(RoboMowBase::Message(data + dataidx, msgLength - dataidx - 1));
 
     return msgLength;
 }
 
 void RoboMowBLE::parsePacket(uint8_t *data, size_t length)
 {
+    if (length == 0)
+    {
+        log_i("Packet has zero length");
+        return;
+    }
+
     if (length > MAX_PACKET_BUFFER)
     {
         log_e("Packet longer (%d) then buffer (%d)", length, MAX_PACKET_BUFFER);
@@ -86,30 +100,34 @@ void RoboMowBLE::parsePacket(uint8_t *data, size_t length)
         pbstartidx = pbendidx = 0;
     }
 
-    if (pbstartidx == 0) // nothing in buffer yet, no need to copy memory
+    if (pbendidx == 0) // nothing in buffer yet, no need to copy memory
     {
         size_t msgLength = parseMessage(data, length);
-        if (msgLength == -1) // invalid packet drop current buffer content
-            pbstartidx = pbendidx = 0;
-        else if (msgLength == 0) // message not yet complete, copy to buffer
+        if (msgLength == -1 || msgLength == length) // invalid packet drop current buffer content or completely handled
         {
-            memcpy(pb, data, length);
-            pbendidx += length;
+            pbstartidx = pbendidx = 0;
+            return;
+        }
+        else
+        {
+            data += msgLength;
+            length -= msgLength;
         }
     }
-    else
-    {
-        memcpy(pb + pbendidx, data, length);
-        pbendidx += length;
 
-        while (pbendidx > pbstartidx)
-        {
-            size_t msgLength = parseMessage(pb + pbstartidx, pbendidx - pbstartidx);
-            if (msgLength == -1) // invalid packet drop current buffer content
-                pbstartidx = pbendidx = 0;
-            else
-                pbstartidx += msgLength;
-        }
+    memcpy(pb + pbendidx, data, length);
+    pbendidx += length;
+
+    while (pbendidx > pbstartidx)
+    {
+
+        size_t msgLength = parseMessage(pb + pbstartidx, pbendidx - pbstartidx);
+        if (msgLength == -1 || msgLength == pbendidx - pbstartidx) // invalid packet drop current buffer content or completely handled
+            pbstartidx = pbendidx = 0;
+        else if (msgLength == 0) // wait for more data
+            break;
+        else
+            pbstartidx += msgLength;
     }
 }
 

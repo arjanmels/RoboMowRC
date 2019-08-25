@@ -38,6 +38,98 @@ public:
         boolean popup;
     };
 
+    enum MSGTYPE
+    {
+        GETCONFIG = 15,
+        MISCELLANEOUS = 22,
+        USER = 27,
+        READEEPROM = 32
+    };
+
+    /*
+Package:
+0xAA <datalength> <messagetype> <messageid> <payload>… <checksum>
+
+Multiple packets in one notification. Notification always starts with new packet, unless very long?
+
+0xAA <datalength> <messagetype> <messageid> <packetId LSB> <packetId MSB> <payload>… <checksum>
+Or:
+0xAA 0x01 <datalen LSB>  <datalen MSB> <messagetype> <messageid> <packetId LSB> <packetId MSB> <payload>… <checksum>
+
+e.g.:
+0xAA 0x05 <messagetype> <messageid> <checksum>
+
+Messagetype always 0x1e
+
+*/
+    class Message
+    {
+        uint8_t *data;
+        uint16_t length;
+
+    public:
+        Message(uint8_t *data, uint16_t length)
+        {
+            this->data = data;
+            this->length = length;
+        }
+
+        MSGTYPE getId() const
+        {
+            return (MSGTYPE)data[0];
+        }
+
+        uint8_t *getData() const
+        {
+            return data;
+        }
+        uint16_t getLength() const
+        {
+            return length;
+        }
+
+        bool checkLength(uint16_t expectedLength) const
+        {
+            if (length - 1 != expectedLength)
+            {
+                log_e("Message too short (received %d != expected %d) for MsgId: %d", length - 1, expectedLength, data[0]);
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        bool checkMinimumLength(uint16_t expectedLength) const
+        {
+            if (length - 1 < expectedLength)
+            {
+                log_e("Message too short (received %d < expected %d) for MsgId: %d", length - 1, expectedLength, data[0]);
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        uint8_t int8(size_t x) const
+        {
+            return data[x + 1];
+        }
+
+        uint16_t int16(size_t x) const
+        {
+            return (data[x + 1] << 8) | data[x + 2];
+        }
+
+        uint32_t int32(size_t x) const
+        {
+            return (data[x + 1] << 24) | (data[x + 2] << 16) | (data[x + 3] << 8) | data[x + 4];
+        }
+    };
+
 protected:
     RoboMow &main;
     bool nopEnabled = true;
@@ -45,36 +137,10 @@ protected:
 
     size_t parseMessage(uint8_t *data, size_t max_length);
 
-    enum MSGTYPE
-    {
-        GETCONFIG = 15,
-        MISCELLANEOUS = 22,
-        USER = 27
-    };
-
-    class Data
-    {
-        uint8_t *data;
-
-    public:
-        Data(uint8_t *data)
-        {
-            this->data = data;
-        }
-
-        uint8_t int8(size_t x)
-        {
-            return data[x];
-        }
-
-        uint16_t int16(size_t x)
-        {
-            return (data[x] << 8) | data[x + 1];
-        }
-    };
-
     bool sendSimpleMsg(uint8_t type);
-    bool sendMiscMsg(uint8_t misctype);
+    bool sendMiscMsg(uint16_t misctype);
+    bool sendGetEEpromParam(uint16_t param);
+    bool doClearUserMessage = false;
 
 public:
     RoboMowBase(RoboMow &main) : main(main)
@@ -89,20 +155,17 @@ public:
         return sendSimpleMsg(MSGTYPE::GETCONFIG);
     }
 
-    bool sendNop()
+    bool sendGetUserMessage()
     {
         return sendSimpleMsg(MSGTYPE::USER);
     }
 
-    virtual bool sendGetRobotState()
-    {
-        return false;
-    }
+    virtual bool sendGetRobotState() { return false; }
 
-    virtual bool sendClearUserMessage()
-    {
-        return false;
-    }
+    virtual bool sendClearUserMessage() { return false; }
+
+    virtual bool sendGetProgramEnabledState() { return false; }
+    virtual bool sendGetChildLockState() { return false; }
 
     virtual void handle()
     {
@@ -111,14 +174,26 @@ public:
             if (millis() - prevNop > 2000)
             {
                 prevNop = millis();
-                log_i("BLE send NOP");
-                sendNop();
-                //  sendGetRobotState();
+                if (main.getFamily() == RoboMow::Unknown)
+                    sendGetRobotConfig();
+                else
+                {
+                    sendGetUserMessage();
+                    sendGetRobotState();
+                    sendGetProgramEnabledState();
+                    sendGetChildLockState();
+                }
             }
+        }
+        if (doClearUserMessage)
+        {
+            sendClearUserMessage();
+            doClearUserMessage = false;
         }
     }
 
-    void handleMessage(uint8_t *adata, size_t length);
+    virtual void
+    handleMessage(Message const &msg);
     void connect();
     void disconnect();
 

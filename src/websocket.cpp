@@ -56,5 +56,15 @@ void websocketSetup()
 
 void websocketHandle()
 {
+    static unsigned long prevBeat = 0;
+    if (millis() - prevBeat > 1000)
+    {
+        prevBeat = millis();
+        webSocket.broadcastTXT(String("U:heartbeat:") + prevBeat);
+        webSocket.broadcastTXT(String("U:freeheap:") + ESP.getFreeHeap());
+        webSocket.broadcastTXT(String("U:freepsram:") + ESP.getFreePsram());
+        webSocket.broadcastTXT(String("U:freestack:") + uxTaskGetStackHighWaterMark(NULL));
+    }
+
     webSocket.loop();
 }

@@ -26,7 +26,6 @@
 #include <AutoConnect.h>
 #include <AutoConnectCredential.h>
 #include <cpp_utils/CPPNVS.h>
-#include "webpages.h"
 #include "RoboMowWebServer.h"
 
 extern NVS nvs;
@@ -160,6 +159,9 @@ void handleNotFound()
     Portal.host().send(302, "text/html", "<html><body>Redirecting to <a href=\"/homepage\">Home Page</a></body></html>");
 }
 
+extern const char settings_aux_json[] asm("_binary_src_settingsaux_json_start");
+extern const char settings_home_json[] asm("_binary_src_settingshome_json_start");
+
 bool RoboMowRCPortal::begin()
 {
     onDetect(startCP);
@@ -177,8 +179,8 @@ bool RoboMowRCPortal::begin()
     config.autoReset = false;
     AutoConnect::config(config);
 
-    settings = loadConfigAux("settings", AuxSettings);
-    home = loadConfigAux("homepage", HomeSettings);
+    settings = loadConfigAux("settings", settings_aux_json);
+    home = loadConfigAux("homepage", settings_home_json);
 
     if (home == nullptr || settings == nullptr)
     {

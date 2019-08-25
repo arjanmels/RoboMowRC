@@ -34,78 +34,73 @@ bool RoboMowBase::sendSimpleMsg(uint8_t type)
     return main.connection.sendPacket(buf, sizeof(buf));
 }
 
-bool RoboMowBase::sendMiscMsg(uint8_t misctype)
+static uint16_t counter = 0;
+
+bool RoboMowBase::sendMiscMsg(uint16_t misctype)
 {
     log_i("Sending misc message: %d", misctype);
-    uint8_t buf[] = {0xAA, 5, 0x1F, 22, misctype, 0x00};
+    uint8_t buf[] = {0xAA, 9, 0x1F, 22, (uint8_t)(counter >> 8), (uint8_t)(counter & 0xff), (uint8_t)(misctype >> 8), (uint8_t)(misctype & 0xff), 0x00};
+    counter++;
+    return main.connection.sendPacket(buf, sizeof(buf));
+}
+
+bool RoboMowBase::sendGetEEpromParam(uint16_t param)
+{
+    log_i("Sending get eeprom param message: %d", param);
+    uint8_t buf[] = {0xAA, 9, 0x1F, 32, (uint8_t)(param >> 8), (uint8_t)(param & 0xff), (uint8_t)(param >> 8), (uint8_t)(param & 0xff), 0x00};
     return main.connection.sendPacket(buf, sizeof(buf));
 }
 
 void RoboMowBase::connect()
 {
-    for (int i = 0; i < 30; i++)
-    {
-        sendGetRobotConfig();
-    }
+    sendGetRobotConfig();
 }
 
 void RoboMowBase::disconnect()
 {
 }
 
-void RoboMowBase::handleMessage(uint8_t *adata, size_t length)
+void RoboMowBase::handleMessage(Message const &msg)
 {
-    MSGTYPE msgId = (MSGTYPE)adata[0];
-    adata++;
-    length--;
-    Data data(adata);
-
-    log_i("Handling Msg; Id: %d, Length: %d, ", msgId, length);
-    hexDump(adata, length);
-
-    switch (msgId)
+    switch (msg.getId())
     {
     case MSGTYPE::GETCONFIG:
     {
-        if (length < 5)
-        {
-            log_e("Message too short for MsgId: %d, Length: %d, Required: 5", msgId, length);
+        if (!msg.checkLength(5))
             break;
-        }
 
-        if (main.getFamily() != data.int8(0))
-            main.changeFamily(data.int8(0));
-        main.mSoftwareVersion = data.int8(1);
-        main.mSoftwareRelease = data.int16(2);
-        main.mMainboardVersion = data.int8(4);
+        if (main.getFamily() != msg.int8(0))
+            main.changeFamily(msg.int8(0));
+        main.mSoftwareVersion = msg.int8(1);
+        main.mSoftwareRelease = msg.int16(2);
+        main.mMainboardVersion = msg.int8(4);
         log_i("RoboMow:GETCONFIG Family %u; Version %u; Revision %u, Mainboard %u", main.getFamily(), main.mSoftwareVersion, main.mSoftwareRelease, main.mMainboardVersion);
         main.updateType();
         break;
     }
     case MSGTYPE::USER:
     {
-        if (length < 7)
-        {
-            log_e("Message too short for MsgId: %d, Length: %d, Required: 5", msgId, length);
+        if (!msg.checkLength(7))
             break;
-        }
 
-        uint8_t textMsgType = data.int8(0);
-        uint16_t textMsgId = data.int16(1);
-        uint16_t systemStopId = data.int16(3);
-        uint16_t systemFailureId = data.int16(5);
+        uint8_t textMsgType = msg.int8(0);
+        uint16_t textMsgId = msg.int16(1);
+        uint16_t systemStopId = msg.int16(3);
+        uint16_t systemFailureId = msg.int16(5);
         log_i("RoboMow:USER Type: %u; TextId: %u; SystemStopId: %u, SystemFailureId: %u", textMsgType, textMsgId, systemStopId, systemFailureId);
         if (main.mTextMsgType != textMsgType || main.mTextMsgId != textMsgId || main.mSystemStopId != systemStopId || main.mSystemFailureId != systemFailureId)
         {
+            bool doUpdate = textMsgType != 0 || main.mTextMsgId == 0;
+
             main.mTextMsgType = textMsgType;
             main.mTextMsgId = textMsgId;
             main.mSystemStopId = systemStopId;
             main.mSystemFailureId = systemFailureId;
 
-            if (textMsgType != 0)
+            if (doUpdate)
             {
                 main.updateMessage();
-                //  sendClearUserMessage();
+                doClearUserMessage = true;
             }
         }
         break;
@@ -113,8 +108,8 @@ void RoboMowBase::handleMessage(uint8_t *adata, size_t length)
     default:
     {
 #if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_ERROR
-        log_e("Unknown MsgId: %d, Length: %d", msgId, length);
-        hexDump(adata, length);
+        log_e("Unknown MsgId: %d, Length: %d", msg.getId(), msg.getLength());
+        hexDump(msg.getData(), msg.getLength());
 #endif
         break;
     }

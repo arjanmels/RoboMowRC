@@ -66,7 +66,7 @@ void setupLora()
     pinMode(23, INPUT);
     delay(10);
 
-    lora.setChannel(CH2); // normally use MULTI, CH2 is for testing only
+    lora.setChannel(MULTI); // normally use MULTI, CH2 is for testing only
     // set datarate
     lora.setDatarate(SF7BW125); // 10 is the maximum static SF (11 & 12 can only be used together with ADR)
     if (!lora.begin(5, 19, 27))
@@ -99,6 +99,8 @@ void sendLocationLora(uint8_t status, float lat = 0.0, float lon = 0.0, float al
         prevLon = lon;
         prevAlt = alt;
 
+        if (Portal.getSettingAsByteArray(CFG_LORANETWORKKEY).size() != 16 || Portal.getSettingAsByteArray(CFG_LORAAPPKEY).size() != 16 || Portal.getSettingAsByteArray(CFG_LORADEVICEADDR).size() != 4)
+            return;
         lora.setNwkSkey(Portal.getSettingAsByteArray(CFG_LORANETWORKKEY).data());
         lora.setAppSkey(Portal.getSettingAsByteArray(CFG_LORAAPPKEY).data());
         lora.setDevAddr(Portal.getSettingAsByteArray(CFG_LORADEVICEADDR).data());

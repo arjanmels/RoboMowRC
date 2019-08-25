@@ -32,19 +32,27 @@ class RoboMowRX : public RoboMowBase
 {
     static std::map<uint16_t, MessageText> messages;
 
-    enum MSGTYPEMISC
+    enum MSGTYPEMISC : uint16_t
     {
         MISC_ROBOTSTATE = 11,
         MISC_CLEARUSERMESSAGE = 14,
     };
 
+    enum EEPROMPARAM : uint16_t
+    {
+        PROGRAMENABLED = 140,
+        CHILDLOCK = 188,
+    };
+
 public:
     using RoboMowBase::RoboMowBase;
-    virtual void handleMessage(uint8_t *data, size_t length);
+    virtual void handleMessage(Message const &msg);
     virtual const MessageText &getMessageText(uint16_t id);
 
     virtual bool sendGetRobotState() { return sendMiscMsg(MISC_ROBOTSTATE); }
     virtual bool sendClearUserMessage() { return sendMiscMsg(MISC_CLEARUSERMESSAGE); }
+    virtual bool sendGetProgramEnabledState() { return sendGetEEpromParam(PROGRAMENABLED); }
+    virtual bool sendGetChildLockState() { return sendGetEEpromParam(CHILDLOCK); }
 };
 
 #endif
