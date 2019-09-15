@@ -10,6 +10,10 @@ Currently a board with PSRAM and 4GB of Flash is required. To use OTA you need 8
 ###ToDo
  
 - [ ] Lots of things...
+- [ ] Websocket: refresh webpage disconnects new and old session
+- [ ] Webpage: Recoonect to websocket automatically?
+
+
 - [ ] Homepage with RoboMow status view and controls
 - [ ] RS and RC series status
 - [ ] Lora: add frequency plan to UI

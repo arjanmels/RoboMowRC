@@ -48,4 +48,6 @@
 #define CFG_GEOAPIKEY F("geoapikey")
 #define CFG_MBSERIAL F("mbserial")
 
+#define CFG_WEBSECRET F("websecret")
+
 #endif

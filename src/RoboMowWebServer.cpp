@@ -28,6 +28,8 @@
 #include <cpp_utils/CPPNVS.h>
 #include "RoboMowWebServer.h"
 
+extern String GlobalWebSecret;
+
 extern NVS nvs;
 
 bool AutoConnectExt::saveParamsToNVM(AutoConnectAux &aux)
@@ -161,6 +163,7 @@ void handleNotFound()
 
 extern const char settings_aux_json[] asm("_binary_src_settingsaux_json_start");
 extern const char settings_home_json[] asm("_binary_src_settingshome_json_start");
+AutoConnectElement elem;
 
 bool RoboMowRCPortal::begin()
 {
@@ -182,12 +185,18 @@ bool RoboMowRCPortal::begin()
     settings = loadConfigAux("settings", settings_aux_json);
     home = loadConfigAux("homepage", settings_home_json);
 
-    if (home == nullptr || settings == nullptr)
-    {
-        log_e("Could not load settings");
+    if (settings == nullptr)
+        log_e("Could not load aux settings");
+    if (home == nullptr)
+        log_e("Could not load home settings");
+
+    if (settings == nullptr || home == nullptr)
         while (true)
             ;
-    }
+
+    String value = String("<div id='websecret' hidden>") + GlobalWebSecret + String("</div>");
+    elem = AutoConnectElement("websecret", value.c_str());
+    home->add(elem);
 
     return AutoConnectExt::begin(nullptr, nullptr, 5000);
 }

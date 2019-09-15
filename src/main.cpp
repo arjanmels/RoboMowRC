@@ -305,6 +305,8 @@ void setup()
 #endif
 }
 
+String GlobalWebSecret;
+
 void setup2()
 {
   // Create RTOS items
@@ -318,6 +320,7 @@ void setup2()
 
   log_i("Start NVS... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
   nvs.init("settings");
+  GlobalWebSecret = String(random(LONG_MAX));
 
   /*  Serial.println("Start Display...");
   log_i("Free heap: %i kByte", ESP.getFreeHeap() / 1024);
@@ -330,7 +333,6 @@ void setup2()
   WiFi.onEvent(WiFiEvent);
 
   log_i("Start Webserver... (Free heap: %d kByte, Free PSRAM: %d kByte)", ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024);
-
   Portal.on("/settings", settingsChanged);
   if (Portal.begin())
   {

@@ -3,6 +3,7 @@
 #include <WebSocketsServer.h>
 
 WebSocketsServer webSocket = WebSocketsServer(81);
+extern String GlobalWebSecret;
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
 {
@@ -16,26 +17,35 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
     {
         IPAddress ip = webSocket.remoteIP(num);
         log_i("[%u] Connected from %d.%d.%d.%d url: %s", num, ip[0], ip[1], ip[2], ip[3], payload);
+        String token = String((char *)payload);
+        int pos = token.indexOf("token=");
+        if (pos >= 0)
+        {
+            pos += 6;
+            int pos2 = token.indexOf('&', pos);
+            if (pos2 >= 0)
+                token = token.substring(pos, pos2);
+            else
+                token = token.substring(pos);
+        }
 
-        // send message to client
-        webSocket.sendTXT(num, "C:Connected");
-        webSocket.broadcastTXT("C:Client Connected");
+        if (!token.equals(GlobalWebSecret))
+        {
+            log_e("[%u] Invalid web secret: %s (expected %s)", num, token.c_str(), GlobalWebSecret.c_str());
+            webSocket.disconnect(num);
+        }
+        else
+        {
+            webSocket.sendTXT(num, "C:Connected");
+            webSocket.broadcastTXT("C:Client Connected");
+        }
     }
     break;
     case WStype_TEXT:
         log_i("[%u] get Text: %s", num, payload);
-
-        // send message to client
-        // webSocket.sendTXT(num, "message here");
-
-        // send data to all connected clients
-        // webSocket.broadcastTXT("message here");
         break;
     case WStype_BIN:
         log_i("[%u] get binary length: %u", num, length);
-
-        // send message to client
-        // webSocket.sendBIN(num, payload, length);
         break;
     case WStype_ERROR:
     case WStype_FRAGMENT_TEXT_START:
