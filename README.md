@@ -36,7 +36,7 @@ Currently a board with PSRAM and 4GB of Flash is required. To use OTA you need 8
 - [ ] General: power saving
 
 
-###Done
+# Done
 - [x] Lora: send old GPS coordinate over different Fport (to avoid polluting TTN mapper)
 - [x] Lora: send SF12 message every 6 hours and immediatly after theft?,
 - [x] Lora: send regular SF7 message max every 5 minutes, normally every 15 minutes
