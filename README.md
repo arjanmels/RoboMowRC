@@ -4,10 +4,10 @@
 Project to monitor and control a RoboMow lawn mower via Bluetooth via an ESP32.
 Currently targeted to TTGO T-Beam board, which includes GPS and LoRaWan functionality.
 
-###L
-###Requirements
+#Requirements
 Currently a board with PSRAM and 4GB of Flash is required. To use OTA you need 8GB of flash.
-###ToDo
+
+#ToDo
  
 - [ ] Lots of things...
 - [ ] Websocket: refresh webpage disconnects new and old session
